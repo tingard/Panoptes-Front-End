@@ -32,11 +32,7 @@ counterpart.registerTranslations 'en',
     loading: 'Loading project'
     disclaimer: "This project has been built using the Zooniverse Project Builder but is not yet an official Zooniverse project. Queries and issues relating to this project directed at the Zooniverse Team may not receive any response."
     nav:
-      research: 'Research'
-      results: 'Results'
       classify: 'Classify'
-      faq: 'FAQ'
-      education: 'Education'
       talk: 'Talk'
 
 ProjectAvatar = React.createClass
@@ -90,10 +86,6 @@ ProjectPage = React.createClass
                 <ProjectAvatar project={@props.project} />
                 {@props.project.display_name}
               </Link>}
-            {unless @props.project.redirect
-              <Link to="#{projectPath}/research" activeClassName="active" className="tabbed-content-tab">
-                <Translate content="project.nav.research" />
-              </Link>}
             {if @props.project.redirect
               <a target="_blank" href={@redirect_classify_link(@props.project.redirect)} className="tabbed-content-tab">
                 <Translate content="project.nav.classify" />
@@ -103,23 +95,14 @@ ProjectPage = React.createClass
                 <Translate content="project.nav.classify" />
               </Link>}
             {unless @props.project.redirect
-              <PromiseRenderer promise={@props.project.get 'pages'}>{(pages) =>
-                pageTitles = @getPageTitles(pages)
+              <PromiseRenderer tag="span" promise={@props.project.get 'pages'}>{(pages) =>
                 <span>
-                  {if pageTitles.results
-                    <Link to="#{projectPath}/results" activeClassName="active"className="tabbed-content-tab">
-                      {pageTitles.results}
+                  {pages.map (page) =>
+                    <Link key={page.id} to="#{projectPath}/#{page.url_key}" activeClassName="active" className="tabbed-content-tab">
+                      {page.title}
                     </Link>}
-                  {if pageTitles.faq
-                    <Link to="#{projectPath}/faq" activeClassName="active" className="tabbed-content-tab">
-                      {pageTitles.faq}
-                    </Link>}
-                  {if pageTitles.education
-                    <Link to="#{projectPath}/education" activeClassName="active" className="tabbed-content-tab">
-                      {pageTitles.education}
-                    </Link>}
-                </span>
-              }</PromiseRenderer>}
+                </span>}
+              </PromiseRenderer>}
             <Link to="#{projectPath}/talk" activeClassName="active" className="tabbed-content-tab">
               <Translate content="project.nav.talk" />
             </Link>
