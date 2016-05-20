@@ -129,6 +129,7 @@ module.exports = React.createClass
 
       {for choiceID in @props.task.choicesOrder
         choice = @props.task.choices[choiceID]
+        console.log('CHOICE-ID: ', choiceID)
         <Details key={choiceID} className="survey-task-editor-choice" summary={
           <strong>{choice.label}</strong>
         }>
@@ -139,8 +140,10 @@ module.exports = React.createClass
               <div key={characteristicID}>
                 <small>
                   {characteristic.label}:{' '}
+                  {console.log('CHARACTERISTIC-valuesOrder: ', characteristic.valuesOrder)}
                   {valueLabels = for valueID in characteristic.valuesOrder when valueID in choice.characteristics[characteristicID]
                     value = characteristic.values[valueID]
+                    console.log('VALUE: ', value)
                     value.label
                   valueLabels.join ', '}
                 </small>
