@@ -3,6 +3,8 @@ Classifier = require '../../classifier'
 mockData = require './mock-data'
 tasks = require '../../classifier/tasks'
 
+HistoriedInput = require '../../components/historied-input'
+
 ClassificationViewer = React.createClass
   getDefaultProps: ->
     classification: null
@@ -72,6 +74,11 @@ DevClassifierPage = React.createClass
 
   render: ->
     <div className="content-container">
+      <p>
+        Here's a demo of the <code>HistoriedInput</code>:<br />
+        <HistoriedInput tag="textarea" defaultValue="go" />
+      </p>
+
       <Classifier user={@props.user}  project={@props.project} classification={@props.classification} onClickNext={@reload} />
       <hr />
       <ClassificationViewer classification={@props.classification} />
