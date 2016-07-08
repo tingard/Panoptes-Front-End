@@ -32,7 +32,7 @@ workflow = apiClient.type('workflows').create
     multi_image_mode: 'flipbook_and_separate'
     multi_image_layout: 'grid3'
 
-  first_task: 'init'
+  first_task: 'draw'
 
   tasks:
     init:
@@ -111,6 +111,7 @@ workflow = apiClient.type('workflows').create
         * Draw something
       '''
       tools: [
+        {type: 'grid', label: 'Grid', color: 'lime'}
         {type: 'point', label: 'Point', color: 'red', min: 1, max: 2}
         {type: 'line', label: 'Line', color: 'yellow', min: 0}
         {type: 'rectangle', label: 'Rectangle', color: 'lime', max: 2}
