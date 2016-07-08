@@ -453,11 +453,11 @@ subject = apiClient.type('subjects').create
 
   locations: if navigator?.onLine
     [
-      {'image/jpeg': '//lorempixel.com/900/600/animals/1'} # Landscape
-      {'image/jpeg': '//lorempixel.com/600/900/animals/2'} # Portrait
-      {'image/jpeg': '//lorempixel.com/1900/1000/animals/3'} # Very wide
-      {'image/jpeg': '//lorempixel.com/1000/1900/animals/4'} # Very tall
-      {'image/jpeg': '//lorempixel.com/400/300/animals/4'} # Sorta small
+      {'image/jpeg': 'https://www.fillmurray.com/900/600'} # Landscape
+      {'image/jpeg': 'https://www.fillmurray.com/600/900'} # Portrait
+      {'image/jpeg': 'https://www.fillmurray.com/1900/1000'} # Very wide
+      {'image/jpeg': 'https://www.fillmurray.com/1000/1900'} # Very tall
+      {'image/jpeg': 'https://www.fillmurray.com/400/300'} # Sorta small
     ]
   else
     [
