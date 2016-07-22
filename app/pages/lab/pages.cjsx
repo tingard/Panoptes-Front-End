@@ -46,10 +46,8 @@ PageEditor = React.createClass
         </label>
       </div>
       <div>
-        <label>
-          <span className="form-label">Content</span><br />
-          <MarkdownEditor ref="contentInput" defaultValue={@props.content} rows={15} cols={80} />
-        </label>
+        <span className="form-label">Content</span><br />
+        <MarkdownEditor ref="contentInput" defaultValue={@props.content} rows={15} cols={80} />
       </div>
     </div>
 
