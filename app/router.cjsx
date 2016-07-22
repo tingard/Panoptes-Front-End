@@ -69,6 +69,7 @@ module.exports =
       </Route>
       <Route path="faq" component={require './pages/project/faq'} />
       <Route path="education" component={require './pages/project/education'} />
+      <Route path=":urlKey" component={require './pages/project/custom-page'} />
     </Route>
 
     <Route path="notifications" component={require './pages/notifications'} />
