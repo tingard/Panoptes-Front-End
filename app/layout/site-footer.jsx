@@ -17,6 +17,7 @@ counterpart.registerTranslations('en', {
       projectBuilder: 'Build a Project',
       howToGuide: 'How to Build',
       projectBuilderPolicies: 'Project Policies',
+      faq: 'FAQ',
     },
     about: {
       aboutUs: 'About Us',
@@ -103,6 +104,11 @@ const AppFooter = React.createClass({
                 {this.loggableLink(<Link to="/lab-policies">
                   <Translate content="footer.discover.projectBuilderPolicies" />
                 </Link>, 'footer.discover.projectBuilderPolicies')}
+              </li>
+              <li>
+                {this.loggableLink(<Link to="/faq">
+                  <Translate content="footer.discover.faq" />
+                </Link>, 'footer.discover.faq')}
               </li>
               {process.env.NODE_ENV !== 'production' &&
                 <li>

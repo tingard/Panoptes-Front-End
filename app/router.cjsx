@@ -56,6 +56,7 @@ module.exports =
     </Route>
 
     <Route path="projects" component={require './pages/projects'} />
+    <Route path="faq" component={require './pages/faq'} />
     <Route path="projects/:owner/:name" component={require './pages/project'}>
       <IndexRoute component={require './pages/project/home'} />
       <Route path="home" component={ONE_UP_REDIRECT} />
