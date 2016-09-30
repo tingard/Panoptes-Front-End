@@ -3,7 +3,7 @@ import Filmstrip from '../components/filmstrip';
 
 const DisciplineSelector = React.createClass({
   propTypes: {
-    onChange: React.PropTypes.function,
+    onChange: React.PropTypes.func,
     value: React.PropTypes.string,
   },
   render() {

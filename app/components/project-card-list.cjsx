@@ -3,9 +3,10 @@ apiClient = require 'panoptes-client/lib/api-client'
 Select = require 'react-select'
 
 Translate = require 'react-translate-component'
-PROJECT_SORTS = (require '../lib/project-sorts').PROJECT_SORTS
+
+`import { PROJECT_SORTS } from '../lib/project-sorts';`
 `import ProjectCardList from '../components/new-project-card-list';`
-`import DisciplineSelector from '../components/discipline-selector';`
+`import DisciplineSelector from '../components/projects-discipline-selector';`
 `import SearchSelector from '../components/projects-search-selector';`
 
 SortSelector = React.createClass

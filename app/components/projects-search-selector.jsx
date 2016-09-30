@@ -5,8 +5,8 @@ import debounce from 'debounce';
 
 const SearchSelector = React.createClass({
   propTypes: {
-    onChange: React.PropTypes.function,
-    query: React.PropTypes.function,
+    onChange: React.PropTypes.func,
+    query: React.PropTypes.func,
   },
 
   navigateToProject(projectId) {
