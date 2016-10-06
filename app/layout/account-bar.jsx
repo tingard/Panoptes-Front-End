@@ -25,12 +25,28 @@ counterpart.registerTranslations('en', {
   },
 });
 
+const AnnoyJordan = React.createClass({
+  displayName: "AnnoyJordan",
+
+  render() {
+    if (this.props.user.id == 1325776 || this.props.user.id == 1323869) {
+      return (<style>
+        {"* { -webkit-text-stroke: 1px rebeccapurple; text-shadow: 5px 5px #558ABB; }"}
+      </style>)
+    } else {
+      return null;
+    }
+  }
+})
+
 const AccountBar = React.createClass({
   contextTypes: {
     user: React.PropTypes.object,
     router: routerShape,
     geordi: React.PropTypes.object,
   },
+
+  displayName: "AccountBar",
 
   getInitialState() {
     return {
@@ -105,6 +121,7 @@ const AccountBar = React.createClass({
   render() {
     return (
       <span className="account-bar">
+        <AnnoyJordan user={this.context.user}></AnnoyJordan>
         <TriggeredModalForm
           ref="accountMenuButton"
           className="site-nav__modal"
