@@ -24,9 +24,15 @@ module.exports = React.createClass
   getInitialState: ->
     alreadySeen: false
     showWarning: false
+    aggregations: null
 
   componentDidMount: ->
+    @getAggregations()
     @setState alreadySeen: @props.subject.already_seen or seenThisSession.check @props.workflow, @props.subject
+
+  getAggregations: ->
+    zooAPI.type('aggregations').get(workflow_id: 2661, admin: true).then (res) =>
+      @setState aggregations: res[0].aggregation.T0['rectangle clusters'][0]['cluster members']
 
   componentWillReceiveProps: (nextProps) ->
     if nextProps.annotation isnt @props.annotation
@@ -38,7 +44,7 @@ module.exports = React.createClass
       LastTaskComponent = tasks[lastTask.type]
       if LastTaskComponent.onLeaveAnnotation?
         LastTaskComponent.onLeaveAnnotation lastTask, oldAnnotation
-  
+
   getSizeRect: ->
     clientRect = @refs.sizeRect?.getBoundingClientRect() # Read only
     return null unless clientRect?
@@ -62,9 +68,26 @@ module.exports = React.createClass
     y = (e.pageY - sizeRect?.top) / scale.vertical || 0
     {x, y}
 
+  renderAggregatedRectangles: ->
+    return unless @state.aggregations?
+    # console.log 'AGGREGATIONS: ', @state.aggregations
+
+    for aggregation in @state.aggregations
+      console.log '  AGGREGATION: ', aggregation
+      p1 = aggregation[0]
+      p2 = aggregation[1]
+      p3 = aggregation[2]
+      p4 = aggregation[3]
+      wid = Math.abs( p1[0] - p4[0] )
+      hei = Math.abs( p1[1] - p2[1] )
+
+      console.log 'WID HEI = ', wid, hei
+      <rect fill='transparent' stroke='red' strokeWidth='2px' x={p1[0]} y={p2[1]}, width={wid}, height={hei} />
+
   render: ->
     taskDescription = @props.workflow.tasks[@props.annotation?.task]
     TaskComponent = tasks[taskDescription?.type]
+
     {type, format, src} = getSubjectLocation @props.subject, @props.frame
 
     createdViewBox = "#{@props.viewBoxDimensions.x} #{@props.viewBoxDimensions.y} #{@props.viewBoxDimensions.width} #{@props.viewBoxDimensions.height}"
@@ -115,6 +138,8 @@ module.exports = React.createClass
               <SVGImage className={"pan-active" if @props.panEnabled} src={src} width={@props.naturalWidth} height={@props.naturalHeight} />
             </Draggable>
           }
+
+          {@renderAggregatedRectangles()}
 
           {if InsideSubject? && !@props.panEnabled
             <InsideSubject {...hookProps} />}

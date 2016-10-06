@@ -4,6 +4,7 @@ Summary = require './summary'
 MarkingInitializer = require './marking-initializer'
 MarkingsRenderer = require './markings-renderer'
 HidePreviousMarksToggle = require './hide-previous-marks-toggle'
+
 GenericTask = require '../generic'
 {Markdown} = (require 'markdownz').default
 icons = require './icons'
