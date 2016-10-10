@@ -8,28 +8,9 @@ Translate = require 'react-translate-component'
 `import ProjectCardList from '../components/new-project-card-list';`
 `import DisciplineSelector from '../components/projects-discipline-selector';`
 `import SearchSelector from '../components/projects-search-selector';`
+`import SortSelector from '../components/projects-sort-selector';`
 
-SortSelector = React.createClass
-  displayName: 'SortSelector'
-  getDefaultProps: ->
-    value: 'default'
-    sortMethods: PROJECT_SORTS
-    onChange: ->
 
-  handleChange: (e) ->
-    @props.onChange e.target.value
-
-  render: ->
-    <Select
-     multi={false}
-     name="sort_order"
-     value={@props.value}
-     placeholder="Sort by"
-     searchPromptText="Select a sort order"
-     closeAfterClick={true}
-     className="standard-input search card-sort"
-     options={@props.sortMethods}
-     onChange={@props.onChange} />
 
 PageSelector = React.createClass
   displayName: 'PageSelector'
