@@ -33,7 +33,7 @@ class SortSelector extends Component {
 
 SortSelector.propTypes = {
   onChange: PropTypes.func.isRequired,
-  sortMethods: PropTypes.object.isRequired,
+  sortMethods: PropTypes.array.isRequired,
   value: PropTypes.string.isRequired,
 };
 

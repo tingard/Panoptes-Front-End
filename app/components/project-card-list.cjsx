@@ -9,27 +9,13 @@ Translate = require 'react-translate-component'
 `import DisciplineSelector from '../components/projects-discipline-selector';`
 `import SearchSelector from '../components/projects-search-selector';`
 `import SortSelector from '../components/projects-sort-selector';`
+`import PageSelector from '../components/projects-page-selector';`
 
 
 
-PageSelector = React.createClass
-  displayName: 'PageSelector'
-  getDefaultProps: ->
-    current: 1
-    total: 0
-
-  handleChange: (page) ->
-    @props.onChange page
-
-  render: ->
-    <nav className="pagination">
-      {if @props.total>1
-         for page in [1..@props.total]
-           active = (page is +@props.current)
-           <button onClick={@handleChange.bind this, page} key={page} className="pill-button" style={border: "2px solid" if active}>{page}</button>}
-    </nav>
 
 ProjectFilteringInterface = React.createClass
+  displayName: 'ProjectFilteringInterface'
   getDefaultProps: ->
     discipline: ''
     page: 1
@@ -113,7 +99,7 @@ ProjectFilteringInterface = React.createClass
           <SearchSelector />
           <SortSelector value={@props.sort} onChange={@handleSortChange} />
         </div>
-
+        {console.log '@state.project_count', @state}
         {if @state.project_count>0
            pageStart = @props.page * 20 - 20 + 1
            pageEnd = Math.min(@props.page * 20, @state.project_count)
@@ -122,12 +108,12 @@ ProjectFilteringInterface = React.createClass
            showingMessage = "projectsPage.notFoundMessage"
         <p className="showing-projects"><Translate pageStart={pageStart} pageEnd={pageEnd} count={@state.project_count} content={showingMessage} /></p>}
         {if @state.pages>1
-           <PageSelector current={@props.page} total={@state.pages} onChange={@handlePageChange} />}
+           <PageSelector current={+@props.page} total={@state.pages} onChange={@handlePageChange} />}
 
         <ProjectCardList projects={@state.projects} />
 
         {if @state.pages>1
-           <PageSelector current={@props.page} total={@state.pages} onChange={@handlePageChange} />}
+           <PageSelector current={+@props.page} total={@state.pages} onChange={@handlePageChange} />}
 
       </section>
 
