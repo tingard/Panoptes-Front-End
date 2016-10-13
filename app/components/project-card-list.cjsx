@@ -1,6 +1,5 @@
 React = require('react')
 apiClient = require 'panoptes-client/lib/api-client'
-Select = require 'react-select'
 
 Translate = require 'react-translate-component'
 

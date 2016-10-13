@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import apiClient from 'panoptes-client/lib/api-client';
 import Select from 'react-select';
 import debounce from 'debounce';
 
-const SearchSelector = React.createClass({
-  propTypes: {
-    onChange: React.PropTypes.func,
-    query: React.PropTypes.func,
-  },
+class SearchSelector extends Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.navigateToProject = this.navigateToProject.bind(this);
+    this.searchByName = this.searchByName.bind(this);
+  }
 
   navigateToProject(projectId) {
     apiClient.type('projects').get(projectId)
@@ -17,7 +19,7 @@ const SearchSelector = React.createClass({
         }
         return window.location.href = ['/projects', project.slug].join('/');
       });
-  },
+  }
 
   searchByName(value, callback) {
     const query = {
@@ -41,11 +43,11 @@ const SearchSelector = React.createClass({
     return callback(null, {
       options: [],
     });
-  },
+  }
 
   handleChange(e) {
     this.props.onChange(e.value);
-  },
+  }
 
   render() {
     return (
@@ -61,7 +63,12 @@ const SearchSelector = React.createClass({
         className="search card-search standard-input"
       />
     );
-  },
-});
+  }
+}
+
+SearchSelector.propTypes = {
+  onChange: PropTypes.func,
+  query: PropTypes.func,
+};
 
 export default SearchSelector;

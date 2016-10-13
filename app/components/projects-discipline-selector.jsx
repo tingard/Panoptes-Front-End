@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import Filmstrip from '../components/filmstrip';
 
-const DisciplineSelector = React.createClass({
-  propTypes: {
-    onChange: React.PropTypes.func,
-    value: React.PropTypes.string,
-  },
+class DisciplineSelector extends Component {
   render() {
     return (
       <Filmstrip increment={350} value={this.props.value} onChange={this.props.onChange} />
     );
-  },
-});
+  }
+}
+
+DisciplineSelector.propTypes = {
+  increment: PropTypes.number,
+  onChange: PropTypes.func,
+  value: PropTypes.string,
+};
 
 export default DisciplineSelector;
