@@ -8,7 +8,7 @@ class PageSelector extends Component {
   }
 
   handleChange(page) {
-    this.props.onChange(page).bind(this);
+    this.props.onChange(page);
   }
 
   renderPageButtons(current, total) {
@@ -19,10 +19,10 @@ class PageSelector extends Component {
           const active = page === +current;
           return (
             <button
-              onClick={this.handleChange(page)}
+              onClick={this.handleChange.bind(this, page)}
               key={i}
               className="pill-button"
-              style={active ? "border: '2px solid'" : "border: 'none'"}
+              style={{ border: active ? '2px solid' : 'none' }}
             >
               {page}
             </button>);
