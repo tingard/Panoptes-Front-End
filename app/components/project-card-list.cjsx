@@ -11,9 +11,6 @@ Translate = require 'react-translate-component'
 `import SortSelector from '../components/projects-sort-selector';`
 `import PageSelector from '../components/projects-page-selector';`
 
-
-
-
 ProjectFilteringInterface = React.createClass
   displayName: 'ProjectFilteringInterface'
   getDefaultProps: ->
@@ -99,7 +96,6 @@ ProjectFilteringInterface = React.createClass
           <SearchSelector />
           <SortSelector value={@props.sort} onChange={@handleSortChange} />
         </div>
-        {console.log '@state.project_count', @state}
         {if @state.project_count>0
            pageStart = @props.page * 20 - 20 + 1
            pageEnd = Math.min(@props.page * 20, @state.project_count)
