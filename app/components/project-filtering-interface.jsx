@@ -34,6 +34,7 @@ class ProjectFilteringInterface extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { discipline, page, sort } = nextProps;
+    console.log(discipline !== this.props.discipline,  page !== this.props.page, sort !== this.props.sort)
     if (discipline !== this.props.discipline ||
         page !== this.props.page ||
         sort !== this.props.sort) {
@@ -59,13 +60,18 @@ class ProjectFilteringInterface extends Component {
     }
     apiClient.type('projects').get(query)
       .then(projects => {
-        const pages = (projects[0] !== null && projects[0].getMeta() !== null)
+        if (projects.length > 0) {
+          const pages = (projects[0] !== null && projects[0].getMeta() !== null)
           ? projects[0].getMeta().page_count
           : 0;
-        const projectCount = (projects[0] !== null && projects[0].getMeta() !== null)
+          const projectCount = (projects[0] !== null && projects[0].getMeta() !== null)
           ? projects[0].getMeta().count
           : 0;
-        this.setState({ projects, pages, projectCount });
+          this.setState({ projects, pages, projectCount });
+        } else {
+          this.setState({ projects: [], pages: 0, projectCount: 0 });
+        }
+
       })
       .catch(error => {
         this.setState({ error });
