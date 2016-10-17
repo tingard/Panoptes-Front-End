@@ -34,7 +34,6 @@ class ProjectFilteringInterface extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { discipline, page, sort } = nextProps;
-    console.log(discipline !== this.props.discipline,  page !== this.props.page, sort !== this.props.sort)
     if (discipline !== this.props.discipline ||
         page !== this.props.page ||
         sort !== this.props.sort) {
