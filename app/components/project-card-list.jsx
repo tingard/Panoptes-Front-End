@@ -1,22 +1,14 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import ProjectCard from '../partials/project-card';
 
-const ProjectCardList = React.createClass({
-  propTypes: {
-    projects: React.PropTypes.array,
-  },
-
-  defaultProps: {
-    projects: [],
-  },
-
+class ProjectCardList extends Component {
   componentDidMount() {
     document.documentElement.classList.add('on-secondary-page');
-  },
+  }
 
   componentWillUnmount() {
     document.documentElement.classList.remove('on-secondary-page');
-  },
+  }
 
   render() {
     return (
@@ -28,8 +20,17 @@ const ProjectCardList = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
+
+ProjectCardList.propTypes = {
+  projects: PropTypes.array,
+};
+
+
+ProjectCardList.defaultProps = {
+  projects: [],
+};
 
 export default ProjectCardList;
 

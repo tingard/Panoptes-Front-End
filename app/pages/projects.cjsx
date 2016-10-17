@@ -2,7 +2,7 @@ counterpart = require 'counterpart'
 React = require 'react'
 {browserHistory} = require 'react-router'
 TitleMixin = require '../lib/title-mixin'
-{ProjectFilteringInterface} = require '../components/project-card-list'
+`import ProjectFilteringInterface from '../components/project-filtering-interface';`
 
 counterpart.registerTranslations 'en',
   projectsPage:
@@ -24,9 +24,9 @@ ProjectsPage = React.createClass
   getDefaultProps: ->
     location:
       query:
-        discipline: ProjectFilteringInterface.defaultProps.discipline
-        page: ProjectFilteringInterface.defaultProps.page
-        sort: ProjectFilteringInterface.defaultProps.sort
+        discipline: ''
+        page: 1
+        sort: '-launch_date'
 
   updateQuery: (newParams) ->
     query = Object.assign {}, @props.location.query, newParams
