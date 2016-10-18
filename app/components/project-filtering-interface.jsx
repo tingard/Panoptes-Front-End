@@ -70,7 +70,6 @@ class ProjectFilteringInterface extends Component {
         } else {
           this.setState({ projects: [], pages: 0, projectCount: 0 });
         }
-
       })
       .catch(error => {
         this.setState({ error });

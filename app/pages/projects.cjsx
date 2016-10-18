@@ -13,9 +13,9 @@ counterpart.registerTranslations 'en',
 
 ProjectsPage = React.createClass
   displayName: 'ProjectsPage'
-  title: 'Projects'
 
-  mixins: [TitleMixin]
+  componentDidMount: ->
+    document?.title = 'Projects \u2014 Zooniverse'
 
   emptyPromise:
     then: ->
