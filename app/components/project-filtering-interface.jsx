@@ -53,6 +53,7 @@ class ProjectFilteringInterface extends Component {
       launch_approved: !apiClient.params.admin ? true : null,
       cards: true,
       include: ['avatar'],
+      state: this.props.status,
     };
     if (!query.tags) {
       delete query.tags;
@@ -100,9 +101,9 @@ class ProjectFilteringInterface extends Component {
     if (this.state.projectCount > 0) {
       pageStart = this.props.page * 20 - 20 + 1;
       pageEnd = Math.min(this.props.page * 20, this.state.projectCount);
-      showingMessage = 'projectsPage.countMessage';
+      showingMessage = 'projects.countMessage';
     } else {
-      showingMessage = 'projectsPage.notFoundMessage';
+      showingMessage = 'projects.notFoundMessage';
     }
     return (
       <p className="showing-projects">
@@ -128,27 +129,20 @@ class ProjectFilteringInterface extends Component {
   render() {
     const { discipline, sort } = this.props;
     return (
-      <div className="secondary-page all-resources-page">
-        <section className="hero projects-hero">
-          <div className="hero-container">
-            <Translate component="h1" content={'projectsPage.title'} />
-          </div>
-        </section>
-        <section className="resources-container">
-          <DisciplineSelector
-            value={discipline}
-            onChange={this.handleDisciplineChange.bind(this)}
-          />
-          <div className="resource-results-counter">
-            <SearchSelector />
-            <SortSelector value={sort} onChange={this.handleSortChange.bind(this)} />
-          </div>
-          {this.renderCounter()}
-          {this.renderPageSelector()}
-          <ProjectCardList projects={this.state.projects} />
-          {this.renderPageSelector()}
-        </section>
-      </div>
+      <section className="resources-container">
+        <DisciplineSelector
+          value={discipline}
+          onChange={this.handleDisciplineChange.bind(this)}
+        />
+        <div className="resource-results-counter">
+          <SearchSelector />
+          <SortSelector value={sort} onChange={this.handleSortChange.bind(this)} />
+        </div>
+        {this.renderCounter()}
+        {this.renderPageSelector()}
+        <ProjectCardList projects={this.state.projects} />
+        {this.renderPageSelector()}
+      </section>
     );
   }
 }
@@ -158,12 +152,14 @@ ProjectFilteringInterface.propTypes = {
   onChangeQuery: PropTypes.func.isRequired,
   page: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
 ProjectFilteringInterface.defaultProps = {
   discipline: '',
   page: 1,
   sort: '-launch_date',
+  status: 'live',
 };
 
 export default ProjectFilteringInterface;

@@ -1,6 +1,12 @@
 Router = {IndexRoute, IndexRedirect, Route, Redirect} = require 'react-router'
 React = require 'react'
 
+`import ProjectsPage from './pages/projects/index';`
+`import ActiveProjects from './pages/projects/projects-active';`
+`import FinishedProjects from './pages/projects/projects-finished';`
+`import PausedProjects from './pages/projects/projects-outofdata';`
+
+
 # <Redirect from="home" to="/" /> doesn't work.
 ONE_UP_REDIRECT = React.createClass
   componentDidMount: ->
@@ -55,7 +61,12 @@ module.exports =
       <Route path="email" component={require './pages/settings/email' } />
     </Route>
 
-    <Route path="projects" component={require './pages/projects'} />
+    <Route path="projects" component={ProjectsPage}>
+      <IndexRoute component={ActiveProjects} />
+      <Route path="finished" component={FinishedProjects} />
+      <Route path="outofdata" component={PausedProjects} />
+    </Route>
+
     <Route path="projects/:owner/:name" component={require './pages/project'}>
       <IndexRoute component={require './pages/project/home'} />
       <Route path="home" component={ONE_UP_REDIRECT} />
