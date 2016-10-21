@@ -11,13 +11,13 @@ class PageSelector extends Component {
     this.props.onChange(page);
   }
 
-  renderPageButtons(current, total) {
+  renderPageButtons(currentPage, totalPages) {
     return (
       <div>
-        {(total > 1)
-        ? [...Array(total).keys()].map((i) => {
+        {(totalPages > 1)
+        ? [...Array(totalPages).keys()].map((i) => {
           const page = i + 1;
-          const active = page === +current;
+          const active = page === +currentPage;
           return (
             <button
               onClick={this.handleChange.bind(this, page)}
@@ -34,24 +34,24 @@ class PageSelector extends Component {
   }
 
   render() {
-    const { current, total } = this.props;
+    const { currentPage, totalPages } = this.props;
     return (
       <nav className="pagination">
-        {this.renderPageButtons(current, total)}
+        {this.renderPageButtons(currentPage, totalPages)}
       </nav>
     );
   }
 }
 
 PageSelector.propTypes = {
-  current: PropTypes.number.isRequired,
+  currentPage: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
-  total: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
 };
 
 PageSelector.defaultProps = {
-  current: 1,
-  total: 0,
+  currentPage: 1,
+  totalPages: 0,
 };
 
 export default PageSelector;

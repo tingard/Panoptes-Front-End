@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { browserHistory } from 'react-router';
 import apiClient from 'panoptes-client/lib/api-client';
 import Select from 'react-select';
 import debounce from 'debounce';
@@ -6,7 +7,6 @@ import debounce from 'debounce';
 class SearchSelector extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
     this.navigateToProject = this.navigateToProject.bind(this);
     this.searchByName = this.searchByName.bind(this);
   }
@@ -15,9 +15,9 @@ class SearchSelector extends Component {
     apiClient.type('projects').get(projectId)
       .then(project => {
         if (project.redirect != null && project.redirect.length !== 0) {
-          return window.location.href = project.redirect;
+          return browserHistory.push(project.redirect);
         }
-        return window.location.href = ['/projects', project.slug].join('/');
+        return browserHistory.push(['/projects', project.slug].join('/'));
       });
   }
 
@@ -43,10 +43,6 @@ class SearchSelector extends Component {
     return callback(null, {
       options: [],
     });
-  }
-
-  handleChange(e) {
-    this.props.onChange(e.value);
   }
 
   render() {

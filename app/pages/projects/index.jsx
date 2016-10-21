@@ -19,9 +19,11 @@ class ProjectsPage extends Component {
     super(props);
     this.updateQuery = this.updateQuery.bind(this);
   }
+
   getChildContext() {
     return { updateQuery: this.updateQuery };
   }
+
   componentDidMount() {
     if (document) {
       document.title = 'Projects \u2014 Zooniverse';

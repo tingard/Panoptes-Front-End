@@ -4,15 +4,6 @@ import Select from 'react-select';
 import { PROJECT_SORTS } from '../lib/project-sorts';
 
 class SortSelector extends Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(e) {
-    this.props.onChange = e.target.value;
-  }
-
   render() {
     const { onChange, sortMethods, value } = this.props;
     return (

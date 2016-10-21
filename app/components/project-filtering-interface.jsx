@@ -3,7 +3,7 @@ import apiClient from 'panoptes-client/lib/api-client';
 import Translate from 'react-translate-component';
 
 import ProjectCardList from '../components/project-card-list';
-import DisciplineSelector from '../components/projects-discipline-selector';
+import Filmstrip from '../components/filmstrip';
 import SearchSelector from '../components/projects-search-selector';
 import SortSelector from '../components/projects-sort-selector';
 import PageSelector from '../components/projects-page-selector';
@@ -121,7 +121,7 @@ class ProjectFilteringInterface extends Component {
     const { page } = this.props;
     return (
       (this.state.pages > 1)
-      ? <PageSelector current={+page} total={this.state.pages} onChange={this.handlePageChange.bind(this)} />
+      ? <PageSelector currentPage={+page} totalPages={this.state.pages} onChange={this.handlePageChange.bind(this)} />
       : null
     );
   }
@@ -130,7 +130,8 @@ class ProjectFilteringInterface extends Component {
     const { discipline, sort } = this.props;
     return (
       <section className="resources-container">
-        <DisciplineSelector
+        <Filmstrip
+          increment={350}
           value={discipline}
           onChange={this.handleDisciplineChange.bind(this)}
         />
