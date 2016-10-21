@@ -24,6 +24,7 @@ class SearchSelector extends Component {
   searchByName(value, callback) {
     const query = {
       search: '%' + value + '%',
+      cards: true,
       launch_approved: !apiClient.params.admin ? true : undefined,
     };
     if ((value != null ? value.trim().length : undefined) > 3) {
