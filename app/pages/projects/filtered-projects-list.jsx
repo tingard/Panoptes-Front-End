@@ -11,27 +11,28 @@ counterpart.registerTranslations('en', {
   },
 });
 
-class FinishedProjects extends Component {
+class FilteredProjectsList extends Component {
   render() {
+    console.info(this.props.route)
     const { discipline, page, sort } = this.props.location.query;
     const filteringProps = { discipline, page, sort };
     return (
-      <ProjectFilteringInterface status={this.props.status} {...filteringProps} onChangeQuery={this.context.updateQuery} />
+      <ProjectFilteringInterface 
+        status={this.props.route.status} 
+        onChangeQuery={this.context.updateQuery}
+        {...filteringProps} 
+      />
     );
   }
 }
 
-FinishedProjects.contextTypes = {
+FilteredProjectsList.contextTypes = {
   updateQuery: PropTypes.func,
 };
 
-FinishedProjects.propTypes = {
+FilteredProjectsList.propTypes = {
   location: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  // add route.status
 };
 
-FinishedProjects.defaultProps = {
-  status: 'finished',
-};
-
-export default FinishedProjects;
+export default FilteredProjectsList;

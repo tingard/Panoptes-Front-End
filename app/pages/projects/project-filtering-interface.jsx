@@ -2,11 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import apiClient from 'panoptes-client/lib/api-client';
 import Translate from 'react-translate-component';
 
-import ProjectCardList from '../components/project-card-list';
-import Filmstrip from '../components/filmstrip';
-import SearchSelector from '../components/projects-search-selector';
-import SortSelector from '../components/projects-sort-selector';
-import PageSelector from '../components/projects-page-selector';
+import ProjectCardList from './project-card-list';
+import Filmstrip from '../../components/filmstrip';
+import SearchSelector from '../../components/projects-search-selector';
+import SortSelector from '../../components/projects-sort-selector';
+import PageSelector from '../../components/projects-page-selector';
 
 class ProjectFilteringInterface extends Component {
   constructor(props) {
@@ -62,11 +62,11 @@ class ProjectFilteringInterface extends Component {
       .then(projects => {
         if (projects.length > 0) {
           const pages = (projects[0] !== null && projects[0].getMeta() !== null)
-          ? projects[0].getMeta().page_count
-          : 0;
+            ? projects[0].getMeta().page_count
+            : 0;
           const projectCount = (projects[0] !== null && projects[0].getMeta() !== null)
-          ? projects[0].getMeta().count
-          : 0;
+            ? projects[0].getMeta().count
+            : 0;
           this.setState({ projects, pages, projectCount });
         } else {
           this.setState({ projects: [], pages: 0, projectCount: 0 });
@@ -81,12 +81,12 @@ class ProjectFilteringInterface extends Component {
   }
 
   handleDisciplineChange(discipline) {
-    const page = 1;
+    const page = '1';
     this.props.onChangeQuery({ discipline, page });
   }
 
   handleSortChange(sort) {
-    const page = 1;
+    const page = '1';
     this.props.onChangeQuery({ sort, page });
   }
 
@@ -158,7 +158,7 @@ ProjectFilteringInterface.propTypes = {
 
 ProjectFilteringInterface.defaultProps = {
   discipline: '',
-  page: 1,
+  page: '1',
   sort: '-launch_date',
   status: 'live',
 };

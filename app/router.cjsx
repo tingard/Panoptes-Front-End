@@ -5,6 +5,7 @@ React = require 'react'
 `import ActiveProjects from './pages/projects/projects-active';`
 `import FinishedProjects from './pages/projects/projects-finished';`
 `import PausedProjects from './pages/projects/projects-outofdata';`
+`import FilteredProjectsList from './pages/projects/filtered-projects-list';`
 
 
 # <Redirect from="home" to="/" /> doesn't work.
@@ -62,9 +63,12 @@ module.exports =
     </Route>
 
     <Route path="projects" component={ProjectsPage}>
-      <IndexRoute component={ActiveProjects} />
-      <Route path="finished" component={FinishedProjects} />
-      <Route path="outofdata" component={PausedProjects} />
+      <IndexRoute component={FilteredProjectsList} status="live" />
+      <Route path="finished" component={FilteredProjectsList} status="finished" />
+      <Route path="outofdata" component={FilteredProjectsList} status="paused" />
+      # <IndexRoute component={ActiveProjects} />
+      # <Route path="finished" component={FinishedProjects} />
+      # <Route path="outofdata" component={PausedProjects} />
     </Route>
 
     <Route path="projects/:owner/:name" component={require './pages/project'}>

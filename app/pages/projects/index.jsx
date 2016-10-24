@@ -56,9 +56,15 @@ class ProjectsPage extends Component {
           <div className="hero-container">
             <Translate content="projectsHome.title" component="h1" />
             <nav className="hero-nav">
-              <IndexLink to="/projects" activeClassName="active"><Translate content="projectsHome.nav.active" /></IndexLink>
-              <Link to="/projects/outofdata" activeClassName="active"><Translate content="projectsHome.nav.outofdata" /></Link>
-              <Link to="/projects/finished" activeClassName="active"><Translate content="projectsHome.nav.finished" /></Link>
+              <IndexLink to="/projects" activeClassName="active">
+                <Translate content="projectsHome.nav.active" />
+              </IndexLink>
+              <Link to="/projects/outofdata" activeClassName="active">
+                <Translate content="projectsHome.nav.outofdata" />
+              </Link>
+              <Link to="/projects/finished" activeClassName="active">
+                <Translate content="projectsHome.nav.finished" />
+              </Link>
             </nav>
           </div>
         </section>
@@ -73,6 +79,7 @@ class ProjectsPage extends Component {
 ProjectsPage.childContextTypes = {
   updateQuery: React.PropTypes.func,
 };
+
 ProjectsPage.propTypes = {
   children: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -82,7 +89,7 @@ ProjectsPage.defaultProps = {
   location: {
     query: {
       discipline: '',
-      page: 1,
+      page: '1',
       sort: '-launch_date',
     },
   },

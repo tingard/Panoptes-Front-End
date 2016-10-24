@@ -1,7 +1,7 @@
 import counterpart from 'counterpart';
 import React, { Component, PropTypes } from 'react';
 
-import ProjectFilteringInterface from '../../components/project-filtering-interface';
+import ProjectFilteringInterface from './project-filtering-interface';
 
 counterpart.registerTranslations('en', {
   projects: {

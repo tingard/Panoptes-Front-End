@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import ProjectCard from '../partials/project-card';
+import ProjectCard from '../../partials/project-card';
 
 class ProjectCardList extends Component {
   componentDidMount() {
@@ -13,9 +13,8 @@ class ProjectCardList extends Component {
   render() {
     return (
       <div className="project-card-list">
-        {this.props.projects.map(project => (
+        {this.props.projects.map(project =>
           <ProjectCard key={project.id} project={project} />
-          )
         )}
       </div>
     );
@@ -32,4 +31,3 @@ ProjectCardList.defaultProps = {
 };
 
 export default ProjectCardList;
-
