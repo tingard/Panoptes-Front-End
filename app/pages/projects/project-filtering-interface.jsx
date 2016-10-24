@@ -28,20 +28,21 @@ class ProjectFilteringInterface extends Component {
   }
 
   componentDidMount() {
-    const { discipline, page, sort } = this.props;
-    this.loadProjects(discipline, page, sort);
+    const { discipline, page, sort, status } = this.props;
+    this.loadProjects(discipline, page, sort, status);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { discipline, page, sort } = nextProps;
+    const { discipline, page, sort, status } = nextProps;
     if (discipline !== this.props.discipline ||
         page !== this.props.page ||
-        sort !== this.props.sort) {
-      this.loadProjects(discipline, page, sort);
+        sort !== this.props.sort ||
+        status !== this.props.status) {
+      this.loadProjects(discipline, page, sort, status);
     }
   }
 
-  loadProjects(discipline, page, sort) {
+  loadProjects(discipline, page, sort, status) {
     this.setState({
       error: null,
       loading: true,
@@ -53,7 +54,7 @@ class ProjectFilteringInterface extends Component {
       launch_approved: !apiClient.params.admin ? true : null,
       cards: true,
       include: ['avatar'],
-      state: this.props.status,
+      state: status,
     };
     if (!query.tags) {
       delete query.tags;
@@ -119,11 +120,13 @@ class ProjectFilteringInterface extends Component {
 
   renderPageSelector() {
     const { page } = this.props;
-    return (
-      (this.state.pages > 1)
-      ? <PageSelector currentPage={+page} totalPages={this.state.pages} onChange={this.handlePageChange.bind(this)} />
-      : null
-    );
+    return (this.state.pages > 1)
+      ? <PageSelector
+          currentPage={+page}
+          totalPages={this.state.pages}
+          onChange={this.handlePageChange}
+        />
+      : null;
   }
 
   render() {
@@ -133,11 +136,11 @@ class ProjectFilteringInterface extends Component {
         <Filmstrip
           increment={350}
           value={discipline}
-          onChange={this.handleDisciplineChange.bind(this)}
+          onChange={this.handleDisciplineChange}
         />
         <div className="resource-results-counter">
           <SearchSelector />
-          <SortSelector value={sort} onChange={this.handleSortChange.bind(this)} />
+          <SortSelector value={sort} onChange={this.handleSortChange} />
         </div>
         {this.renderCounter()}
         {this.renderPageSelector()}

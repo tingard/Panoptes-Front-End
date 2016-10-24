@@ -25,7 +25,6 @@ ProjectCardList.propTypes = {
   projects: PropTypes.array.isRequired,
 };
 
-
 ProjectCardList.defaultProps = {
   projects: [],
 };
