@@ -4,6 +4,9 @@ ReactDOM = require 'react-dom'
 useScroll = require 'react-router-scroll/lib/useScroll'
 routes = require './router'
 style = require '../css/main.styl'
+chatClient = require './lib/chat_client'
+
+window.chatClient = chatClient
 
 # Redirect any old `/#/foo`-style URLs to `/foo`.
 if location?.hash.charAt(1) is '/'

@@ -26,15 +26,15 @@ PanoptesApp = React.createClass
     geordi: @geordiLogger
     notificationsCounter: @props.notificationsCounter
     unreadNotificationsCount: @state.unreadNotificationsCount
-    pusher: @props.pusher
+    pusher: @state.pusher
 
   getInitialState: ->
     initialLoadComplete: false
     user: null
+    pusher: new Pusher(pusherEnv, {encrypted: true, authEndpoint: 'http://localhost:3000/pusher/auth'});
 
   getDefaultProps: ->
     notificationsCounter: new NotificationsCounter()
-    pusher: new Pusher(pusherEnv, {encrypted: true});
 
   componentWillMount: ->
     @geordiLogger = new GeordiLogger
@@ -54,11 +54,13 @@ PanoptesApp = React.createClass
     @updateNotificationsCount params: nextProps.params
 
   handleAuthChange: ->
+    console.log 'auth change'
     @geordiLogger.forget ['userID']
     auth.checkCurrent().then (user) =>
       @setState
         initialLoadComplete: true
         user: user
+        pusher: new Pusher(pusherEnv, {encrypted: true, authEndpoint: 'http://localhost:3000/pusher/auth'});
       @updateNotificationsCount {user}
       @geordiLogger.remember userID: user.id if user?
 

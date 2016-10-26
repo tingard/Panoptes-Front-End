@@ -40,4 +40,3 @@ module.exports = React.createClass
         else if !shiftKey and document.activeElement == focusables[focusables.length - 1]
           focusables[0]?.focus()
           e.preventDefault()
-
