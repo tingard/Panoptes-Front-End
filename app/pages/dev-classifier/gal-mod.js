@@ -6,9 +6,15 @@ const BLANK_IMAGE = ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgAQMA
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgzwCX4AAB9Dl2RwAAAABJRU5ErkJggg=='].join('');
 
 const DISK_DRAWING_DETAILS = [
+  { type: 'slider', instruction: 'Choose Sersic Index', metadata: 'sersic-index' },
+  { type: 'slider', instruction: 'Choose Intensity', metadata: 'sersic-intensity' },
+];
+
+const BULGE_DRAWING_DETAILS = [
   { type: 'slider', instruction: 'Choose Sersic Index' },
   { type: 'slider', instruction: 'Choose Intensity' },
 ];
+
 
 const SPIRAL_DRAWING_DETAILS = [
   { type: 'slider', instruction: 'Sersic Index' },
@@ -43,6 +49,7 @@ const workflow = apiClient.type('workflows').create({
       tools: [
         { type: 'point', label: 'Point Source', color: 'red' },
         { type: 'ellipse', label: 'Galaxtic Disk ', color: 'magenta', details: DISK_DRAWING_DETAILS },
+        { type: 'ellipse', label: 'Galaxtic Bulge ', color: 'magenta', details: BULGE_DRAWING_DETAILS },
         { type: 'bezier', label: 'Spiral arm (bezier)', color: 'orange', details: SPIRAL_DRAWING_DETAILS },
         { type: 'polygon', label: 'Spiral arm (polygon)', color: 'cyan', details: SPIRAL_DRAWING_DETAILS },
       ],
@@ -83,15 +90,11 @@ const workflow = apiClient.type('workflows').create({
 
 const subject = apiClient.type('subjects').create({
   id: 'MOCK_SUBJECT_FOR_CLASSIFIER',
-
-  /* Images originally from lorempixel.com shared under CC BY-SA,
-  but the service is often slow and/or fails to load at all.
-  Noted original source next to each. */
   locations: ((navigator && navigator.onLine) ?
     [
-      {'image/jpeg': `${window.location.origin}/assets/dev-classifier/sloanGalaxy.jpg`}, // //lorempixel.com/900/600/animals/1
-      {'image/jpeg': `${window.location.origin}/assets/dev-classifier/sloanGalaxy.jpg`}, // //lorempixel.com/900/600/animals/1
-      {'image/jpeg': `${window.location.origin}/assets/dev-classifier/sloanGalaxy.jpg`}, // //lorempixel.com/900/600/animals/1
+      {'image/jpeg': `${window.location.origin}/assets/dev-classifier/sloanGalaxy.jpg`},
+      {'image/jpeg': `${window.location.origin}/assets/dev-classifier/sloanGalaxy.jpg`},
+      {'image/jpeg': `${window.location.origin}/assets/dev-classifier/sloanGalaxy.jpg`},
     ]
   :
     [
