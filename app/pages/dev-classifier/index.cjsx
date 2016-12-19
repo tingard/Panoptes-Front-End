@@ -1,6 +1,6 @@
 React = require 'react'
 Classifier = require '../../classifier'
-mockData = require './mock-data'
+mockData = require './gal-mod'
 tasks = require '../../classifier/tasks'
 
 ClassificationViewer = React.createClass

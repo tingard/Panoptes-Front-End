@@ -100,7 +100,7 @@ module.exports = React.createClass
 
         unless MarkComponent.initValid multiple, @props
           @destroyMark @props.annotation, multiple
-
+    #@props.onChange Object.assign {}, @props.annotation, { isDrawing: true }
     @props.classification.update 'annotations'
 
     if MarkComponent.initValid?

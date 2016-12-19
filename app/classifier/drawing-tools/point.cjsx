@@ -5,10 +5,10 @@ Draggable = require '../../lib/draggable'
 DeleteButton = require './delete-button'
 isInBounds = require '../../lib/is-in-bounds'
 
-RADIUS = 
+RADIUS =
   large: 10
   small: 2
-SELECTED_RADIUS = 
+SELECTED_RADIUS =
   large: 20
   small: 10
 CROSSHAIR_SPACE = 0.2
@@ -38,12 +38,12 @@ module.exports = React.createClass
 
     initRelease: ->
       _inProgress: false
-    
+
     options: ['size']
 
   getDefaultProps: ->
     size: 'large'
-  
+
   getDeleteButtonPosition: ->
     theta = (DELETE_BUTTON_ANGLE) * (Math.PI / 180)
     x: (SELECTED_RADIUS.large / @props.scale.horizontal) * Math.cos theta

@@ -48,19 +48,19 @@ module.exports = React.createClass
 
     if FrameWrapper
       <PanZoom ref="panZoom" enabled={zoomEnabled} frameDimensions={@state.frameDimensions}>
-        <FrameWrapper 
-          frame={frame} 
-          naturalWidth={@state.frameDimensions?.width or 0} 
-          naturalHeight={@state.frameDimensions?.height or 0} 
-          workflow={@props.workflow} 
-          subject={@props.subject} 
-          classification={@props.classification} 
-          annotation={@props.annotation} 
+        <FrameWrapper
+          frame={frame}
+          naturalWidth={@state.frameDimensions?.width or 0}
+          naturalHeight={@state.frameDimensions?.height or 0}
+          workflow={@props.workflow}
+          subject={@props.subject}
+          classification={@props.classification}
+          annotation={@props.annotation}
           loading={@state.loading}
           preferences={@props.preferences}
-          modification={@props?.modification} 
-          onChange={@props.onChange} 
-          >
+          modification={@props?.modification}
+          onChange={@props.onChange}
+        >
           {frameDisplay}
         </FrameWrapper>
       </PanZoom>
@@ -83,4 +83,3 @@ module.exports = React.createClass
         y: 0
 
     @props.onLoad? e, @props.frame
-

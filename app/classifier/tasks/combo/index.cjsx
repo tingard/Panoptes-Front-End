@@ -15,6 +15,7 @@ ComboTask = React.createClass
     getDefaultAnnotation: (taskDescription, workflow, taskComponents) ->
       value: taskDescription.tasks.map (childTaskKey) ->
         childTaskDescription = workflow.tasks[childTaskKey]
+        console.log workflow.tasks
         ChildTaskComponent = taskComponents[childTaskDescription.type]
         defaultAnnotation = ChildTaskComponent.getDefaultAnnotation childTaskDescription, workflow, taskComponents
         Object.assign task: childTaskKey, defaultAnnotation

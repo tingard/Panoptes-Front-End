@@ -126,6 +126,7 @@ EditWorkflowPage = React.createClass
                             when 'flexibleSurvey' then <i className="fa fa-binoculars fa-fw"></i>
                             when 'crop' then <i className="fa fa-crop fa-fw"></i>
                             when 'text' then <i className="fa fa-file-text-o fa-fw"></i>
+                            when 'slider' then <i className="fa fa-sliders fa-fw"></i>
                             when 'dropdown' then <i className="fa fa-list fa-fw"></i>
                             when 'combo' then <i className="fa fa-cubes fa-fw"></i>}
                           {' '}
@@ -171,7 +172,15 @@ EditWorkflowPage = React.createClass
                       <small><strong>Survey</strong></small>
                     </button>
                   </AutoSave>{' '}
-                  {if @canUseTask(@props.project, "crop")
+                  {if true # @canUseTask(@props.project, "slider")
+                    <AutoSave resource={@props.workflow}>
+                      <button type="submit" className="minor-button" onClick={@addNewTask.bind this, 'slider'} title="Slider tasks: WHEEEE SLIDERS">
+                        <i className="fa fa-sliders fa-2x"></i>
+                        <br />
+                        <small><strong>Slider</strong></small>
+                      </button>
+                    </AutoSave>}{' '}
+                  {if true # @canUseTask(@props.project, "crop")
                     <AutoSave resource={@props.workflow}>
                       <button type="submit" className="minor-button" onClick={@addNewTask.bind this, 'crop'} title="Crop tasks: the volunteer draws a rectangle around an area of interest, and the view of the subject is approximately cropped to that area.">
                         <i className="fa fa-crop fa-2x"></i>
@@ -179,7 +188,7 @@ EditWorkflowPage = React.createClass
                         <small><strong>Crop</strong></small>
                       </button>
                     </AutoSave>}{' '}
-                  {if @canUseTask(@props.project, "dropdown")
+                  {if true # @canUseTask(@props.project, "dropdown")
                       <AutoSave resource={@props.workflow}>
                         <button type="submit" className="minor-button" onClick={@addNewTask.bind this, 'dropdown'} title="Dropdown tasks: the volunteer selects an option from a list. Conditional dropdowns can be created, and if a research team enables the feature, a volunteer can enter text if the answer they'd like to provide is not an option available.">
                           <i className="fa fa-list fa-2x"></i>
@@ -187,7 +196,7 @@ EditWorkflowPage = React.createClass
                           <small><strong>Dropdown</strong></small>
                         </button>
                       </AutoSave>}{' '}
-                  {if @canUseTask(@props.project, "combo")
+                  {if true # @canUseTask(@props.project, "combo")
                     <AutoSave resource={@props.workflow}>
                       <button type="submit" className="minor-button" onClick={@addNewTask.bind this, 'combo'} title="Combo tasks: show a bunch of tasks at the same time.">
                         <i className="fa fa-cubes fa-2x"></i>
@@ -511,6 +520,7 @@ EditWorkflowPage = React.createClass
       nextTaskID = "T#{taskCount + taskIDNumber}"
 
     changes = {}
+    console.log('Tasks:', tasks);
     changes["tasks.#{nextTaskID}"] = tasks[type].getDefaultTask()
     unless @props.workflow.first_task
       changes.first_task = nextTaskID

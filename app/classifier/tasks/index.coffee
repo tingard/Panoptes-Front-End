@@ -1,3 +1,5 @@
+`import ModelFitTask from './modelling/model-fit'`
+
 module.exports =
   combo: require './combo'
   single: require './single'
@@ -7,7 +9,9 @@ module.exports =
   flexibleSurvey: require './survey'
   crop: require './crop'
   text: require './text'
+  slider: require './slider'
   dropdown: require './dropdown'
   shortcut: require './shortcut'
+  modelFit: ModelFitTask
 
 window?._tasks = module.exports

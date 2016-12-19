@@ -25,6 +25,8 @@ Shortcut = require './tasks/shortcut'
 MetadataBasedFeedback = require './metadata-based-feedback'
 {VisibilitySplit} = require('seven-ten')
 
+`import ModelCanvas from '../components/model-canvas'`
+
 # For easy debugging
 window.cachedClassification = CacheClassification
 
@@ -171,6 +173,16 @@ Classifier = React.createClass
           else if not @props.workflow.configuration?.hide_classification_summaries # Classification is complete; show summary if enabled
             @renderSummary currentClassification}
         </div>
+        {if @props.workflow?.configuration?.metadata?.type is 'modelling'
+          (
+            <ModelCanvas
+              classification={currentClassification}
+              onRender={@handleAnnotationChange.bind this, currentClassification}
+              subject={@props.subject}
+              workflow={@props.workflow}
+            />
+          )
+        }
       </div>
     }</ChangeListener>
 

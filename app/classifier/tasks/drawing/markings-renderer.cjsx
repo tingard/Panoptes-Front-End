@@ -36,7 +36,7 @@ module.exports = React.createClass
   render: ->
     skippedMarks = 0
     <g>
-      {for annotation in @props.classification?.annotations ? []      
+      {for annotation in @props.classification?.annotations ? []
         annotation._key ?= Math.random()
         isPriorAnnotation = annotation isnt @props.annotation
         taskDescription = @props.workflow.tasks[annotation.task]

@@ -46,6 +46,7 @@ workflow = apiClient.type('workflows').create
         {label: 'Everything all at once! :skull:', next: 'combo'}
         {label: 'Crop the image', next: 'crop'}
         {label: 'Enter some text', next: 'write'}
+        {label: 'Slide the thing!', next: 'slide'}
         {label: 'Single-answer question', next: 'ask'}
         {label: 'Multi-answer question', next: 'features'}
         {label: 'Draw stuff', next: 'draw'}
@@ -60,6 +61,7 @@ workflow = apiClient.type('workflows').create
       tasks: [
         'crop'
         'write'
+        'slde'
         'ask'
         'features'
         'draw'
@@ -80,8 +82,15 @@ workflow = apiClient.type('workflows').create
       help: '''
         **Example**: If you see a bee, then type "Bee"
       '''
+      next: 'slide'
+    slide:
+      type: 'slider'
+      required: true
+      instruction: 'How Awesome is the thing?'
+      help: '''
+        **Example**: Just go for it
+      '''
       next: 'ask'
-
     ask:
       type: 'single'
       question: 'Rhino starts with...'
@@ -455,8 +464,8 @@ workflow = apiClient.type('workflows').create
 subject = apiClient.type('subjects').create
   id: 'MOCK_SUBJECT_FOR_CLASSIFIER'
 
-  # Images originally from lorempixel.com shared under CC BY-SA, 
-  # but the service is often slow and/or fails to load at all. 
+  # Images originally from lorempixel.com shared under CC BY-SA,
+  # but the service is often slow and/or fails to load at all.
   # Noted original source next to each.
   locations: if navigator?.onLine
     [
