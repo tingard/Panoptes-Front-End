@@ -26,6 +26,7 @@ MetadataBasedFeedback = require './metadata-based-feedback'
 {VisibilitySplit} = require('seven-ten')
 
 `import ModelCanvas from '../components/model-canvas'`
+`import ModelScore from '../components/model-score'`
 
 # For easy debugging
 window.cachedClassification = CacheClassification
@@ -253,7 +254,8 @@ Classifier = React.createClass
           {persistentHooksAfterTask.map (HookComponent, i) =>
             key = i + Math.random()
             <HookComponent key={key} {...taskHookProps} />}
-
+            {if @props.workflow?.configuration?.metadata?.type is 'modelling'
+              <ModelScore workflow={@props.workflow} />}
           <hr />
 
           {if task.unlinkedTask

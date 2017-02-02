@@ -64,7 +64,7 @@ module.exports = React.createClass
         <line x1="0" y1="0" x2={@props.mark.r} y2="0" strokeWidth={GUIDE_WIDTH / ((@props.scale.horizontal + @props.scale.vertical) / 2)} strokeDasharray={GUIDE_DASH} />}
 
       <Draggable onDrag={@handleMainDrag} onEnd={deleteIfOutOfBounds.bind null, this} disabled={@props.disabled}>
-        <ellipse rx={@props.mark.r} ry={@props.mark.r} />
+        <ellipse className="drawing-tool-shape" rx={@props.mark.r} ry={@props.mark.r}/>
       </Draggable>
 
       {if @props.selected

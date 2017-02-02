@@ -17,7 +17,6 @@ module.exports = React.createClass
   render: ->
     childProps =
       className: [@props.children.props.className, 'draggable'].filter(Boolean).join ' '
-
     if @props.disabled
       Object.assign childProps,
       'data-disabled': true

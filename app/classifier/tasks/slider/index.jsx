@@ -35,29 +35,34 @@ class SliderTask extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
   handleChange() {
-    const value = this.sliderInput.value;
+    const value = parseInt(this.sliderInput.value);
     const newAnnotation = Object.assign(this.props.annotation, {value});
     this.props.onChange(newAnnotation);
   }
   render() {
+    const isHidden = typeof(this.props.task.metadata) !== 'undefined' &&
+      this.props.task.metadata.indexOf('fixed') !== -1;
     return (
-      <GenericTask
-        question={this.props.task.instruction}
-        help={this.props.task.help}
-        required={this.props.task.required}
-      >
-        <label className="answer">
-          <input
-            type="range"
-            autoFocus={this.props.autoFocus}
-            className="standard-input full"
-            ref={ (r) => { this.sliderInput = r }}
-            onChange={this.handleChange}
-            max={100}
-            min={0}
-          />
-        </label>
-      </GenericTask>
+      <div hidden={isHidden}>
+        <GenericTask
+          question={this.props.task.instruction}
+          help={this.props.task.help}
+          required={this.props.task.required}
+        >
+          <div className="standard-input full">
+            <label className="answer">
+              <input
+                type="range"
+                autoFocus={this.props.autoFocus}
+                ref={ (r) => { this.sliderInput = r }}
+                onChange={this.handleChange}
+                max={101}
+                min={1}
+              />
+            </label>
+          </div>
+        </GenericTask>
+      </div>
     );
   }
 }

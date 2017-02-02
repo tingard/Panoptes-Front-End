@@ -71,7 +71,7 @@ module.exports = React.createClass
         </g>}
 
       <Draggable onDrag={@handleMainDrag} onEnd={deleteIfOutOfBounds.bind null, this} disabled={@props.disabled}>
-        <ellipse rx={@props.mark.rx} ry={@props.mark.ry} />
+        <ellipse className="drawing-tool-shape" rx={@props.mark.rx} ry={@props.mark.ry} />
       </Draggable>
 
       {if @props.selected

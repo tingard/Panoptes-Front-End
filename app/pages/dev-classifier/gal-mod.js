@@ -6,20 +6,32 @@ const BLANK_IMAGE = ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgAQMA
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgzwCX4AAB9Dl2RwAAAABJRU5ErkJggg=='].join('');
 
 const DISK_DRAWING_DETAILS = [
-  { type: 'slider', instruction: 'Choose Sersic Index', metadata: 'sersic-index' },
-  { type: 'slider', instruction: 'Choose Intensity', metadata: 'sersic-intensity' },
+  { type: 'slider', instruction: 'Choose Intensity' },
+  { type: 'slider', instruction: 'Choose Spread' },
 ];
 
 const BULGE_DRAWING_DETAILS = [
   { type: 'slider', instruction: 'Choose Sersic Index' },
   { type: 'slider', instruction: 'Choose Intensity' },
+  { type: 'slider', instruction: 'Choose Spread' },
 ];
 
+const BAR_DRAWING_DETAILS = [
+  { type: 'slider', instruction: 'Choose Sersic Index' },
+  { type: 'slider', instruction: 'Choose Intensity' },
+  { type: 'slider', instruction: 'Choose Spread' },
+  { type: 'slider', instruction: 'Choose Bar Shape' },
+];
+
+const PSF_DRAWING_DETAILS = [
+  { type: 'slider', instruction: 'Choose Mask Size' },
+];
 
 const SPIRAL_DRAWING_DETAILS = [
   { type: 'slider', instruction: 'Sersic Index' },
   { type: 'slider', instruction: 'Intensity' },
-  { type: 'text', instruction: 'Any additional comments?' },
+  { type: 'slider', instruction: 'Choose Spread' },
+  { type: 'slider', instruction: 'Choose Eccentricity' },
 ];
 
 
@@ -47,11 +59,11 @@ const workflow = apiClient.type('workflows').create({
       required: true,
       question: 'Draw the Galaxy components',
       tools: [
-        { type: 'point', label: 'Point Source', color: 'red' },
-        { type: 'ellipse', label: 'Galaxtic Disk ', color: 'magenta', details: DISK_DRAWING_DETAILS },
-        { type: 'ellipse', label: 'Galaxtic Bulge ', color: 'magenta', details: BULGE_DRAWING_DETAILS },
-        { type: 'bezier', label: 'Spiral arm (bezier)', color: 'orange', details: SPIRAL_DRAWING_DETAILS },
-        { type: 'polygon', label: 'Spiral arm (polygon)', color: 'cyan', details: SPIRAL_DRAWING_DETAILS },
+        { type: 'point', label: 'Point Source', color: 'red', details: PSF_DRAWING_DETAILS },
+        { type: 'ellipse', label: 'Galactic Disk ', color: 'orange', details: DISK_DRAWING_DETAILS },
+        { type: 'ellipse', label: 'Galactic Bulge ', color: 'magenta', details: BULGE_DRAWING_DETAILS },
+        { type: 'ellipse', label: 'Galactic Bar ', color: 'blue', details: BAR_DRAWING_DETAILS },
+        { type: 'polygon', label: 'Spiral arm', color: 'cyan', details: SPIRAL_DRAWING_DETAILS },
       ],
       next: 'should_model_fit'
     },
@@ -63,7 +75,7 @@ const workflow = apiClient.type('workflows').create({
       help: 'You don’t need help with this.',
       answers: [
         {label: 'Yes', next: 'model_fit'},
-        {label: 'No', next: 'review'},
+        {label: 'No', next: null},
       ],
     },
     model_fit: {
@@ -71,18 +83,17 @@ const workflow = apiClient.type('workflows').create({
       required: false,
       method: 'LM',
       question: 'GLHF',
-      next: 'review',
+      next: null,
     },
     review: {
       type: 'single',
       required: true,
       question: 'What next?',
       next: null,
-      help: 'What would you like to do next? You can go back to draw more components',
+      help: 'What would you like to do next?',
       answers: [
-        {label: 'Add/remove/edit components', next: 'model_draw'},
         {label: 'Try another fit', next: 'model_fit'},
-        {label: 'I\'m done here', next: null},
+        {label: 'I\'m done', next: null},
       ],
     },
   },

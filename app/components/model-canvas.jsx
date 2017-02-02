@@ -1,111 +1,96 @@
+// let's try this again, with the new version
+// TODO: How to load model components for the current project?
+
 import React from 'react';
 
-/*
-Process:
-constructor initialises local variables and state
-componentDidMount initialises the list of coordinates to render
-*/
+import Model from '../lib/model-component';
 
-function sersic2d(coords, kwargs) {
-  // grab parameters and check which are defined, otherwise provide defaults
-  const params = typeof(kwargs) === 'undefined' ? {} : kwargs;
-  const mu = typeof(params.mu) === 'undefined' ? [100, 100] : params.mu;
-  const rEff = typeof(params.rEff) === 'undefined' ? 10 : params.rEff;
-  const axRatio = typeof(params.axRatio) === 'undefined' ? 1 : params.axRatio;
-  const roll = typeof(params.roll) === 'undefined' ? 0 : params.roll;
-  const I0 = typeof(params.I0) === 'undefined' ? 200 : params.I0;
-  const n = typeof(params.n) === 'undefined' ? 1 : params.n;
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
+}
 
-  // precalculate values where possible
-  const sinRoll = Math.sin(roll);
-  const cosRoll = Math.cos(roll);
-  const xCorr = mu[0] - mu[0] * cosRoll + mu[1] * sinRoll;
-  const yCorr = mu[1] - mu[1] * cosRoll - mu[0] * sinRoll;
-  let xPrime = 0;
-  let yPrime = 0;
-  let weightedRadius = 1;
-  // calculate sersic value at rolled coordinates
-  const ret = coords.map((coord) => {
-    xPrime = coord[0] * cosRoll - coord[1] * sinRoll + xCorr;
-    yPrime = coord[0] * sinRoll + coord[1] * cosRoll + yCorr;
-    weightedRadius = Math.sqrt(Math.pow(axRatio / rEff, 2) * Math.pow(xPrime - mu[0], 2) +
-      Math.pow(yPrime - mu[1], 2) / Math.pow(rEff, 2));
-    return Math.exp(Math.log(I0) - Math.pow(weightedRadius, 1 / n));
-  });
-  return ret;
-}
-function interpolate(val, y0, x0, y1, x1) {
-  return (val-x0)*(y1-y0)/(x1-x0) + y0;
-}
-function cmapBlue(grayscale) {
-  if ( grayscale < -0.33 ) return 1.0;
-  else if ( grayscale < 0.33 ) return interpolate( grayscale, 1.0, -0.33, 0.0, 0.33 );
-  else return 0.0;
-}
-function cmapGreen(grayscale) {
-  if (grayscale < -1.0) return 0.0; // unexpected grayscale value
-  if  (grayscale < -0.33) return interpolate( grayscale, 0.0, -1.0, 1.0, -0.33 );
-  else if (grayscale < 0.33) return 1.0;
-  else if (grayscale <= 1.0) return interpolate( grayscale, 1.0, 0.33, 0.0, 1.0 );
-  else {
-    return 1.0; // unexpected grayscale value
-  }
-}
-function cmapRed(grayscale) {
-  if (grayscale < -0.33) return 0.0;
-  else if (grayscale < 0.33) return interpolate( grayscale, 0.0, -0.33, 1.0, 0.33 );
-  else return 1.0;
-}
+const cmap = (function (c, v) {
+  return 0 < v < 127 ? hexToRgb(c[parseInt(v)]) : null;
+}).bind(null, [
+  '#ff5555','#ff5454','#ff5353','#ff5252','#ff5150','#ff504f','#ff4f4e','#ff4f4d',
+  '#ff4e4c','#ff4d4b','#ff4c49','#ff4b48','#ff4a47','#ff4946','#ff4845','#ff4744',
+  '#ff4642','#ff4541','#ff4340','#ff423f','#ff413e','#ff403d','#ff3f3b','#ff3e3a',
+  '#ff3d39','#ff3c38','#ff3a37','#ff3935','#ff3834','#ff3733','#ff3532','#ff3430',
+  '#ff332f','#ff312e','#ff302d','#ff2e2c','#ff2d2a','#ff2b29','#ff2a28','#ff2826',
+  '#ff2625','#ff2524','#ff2322','#fe2222','#fd2121','#fc2121','#fb2121','#f92020',
+  '#f82020','#f71f1f','#f61f1f','#f41f1f','#f31e1e','#f21e1e','#f11d1d','#f01d1d',
+  '#ee1d1d','#ed1c1c','#ec1c1c','#eb1b1b','#e91b1b','#e81b1b','#e71a1a','#e61a1a',
+  '#e51919','#e31919','#e21919','#e11818','#e01818','#df1717','#dd1717','#dc1717',
+  '#db1616','#da1616','#d91515','#d71515','#d61515','#d51414','#d41414','#d31313',
+  '#d21313','#d01312','#cf1212','#ce1212','#cd1111','#ca1211','#c51311','#c01411',
+  '#bb1511','#b61611','#b11711','#ac1711','#a61811','#a11911','#9c1911','#981911',
+  '#931911','#8e1a11','#891a10','#841a10','#7f1a10','#7a1a10','#761a10','#711910',
+  '#6c190f','#68190f','#63180f','#5e180e','#5a180e','#55170e','#51170d','#4c160d',
+  '#48160c','#44150b','#3f140b','#3b140a','#371309','#331208','#2f1108','#2b1007',
+  '#270f06','#230e05','#1f0c04','#1b0a03','#170703','#110502','#090201','#000000',
+  '#040307','#08060e','#0c0913','#100c17','#120f1b','#14111f','#161423','#181527',
+  '#1a172b','#1c192f','#1d1a34','#1f1c38','#211e3c','#232040','#252145','#262349',
+  '#28254e','#2a2752','#2c2857','#2e2a5c','#2f2c60','#312e65','#33306a','#35316e',
+  '#363373','#383578','#3a377d','#3c3982','#3e3b87','#3f3d8c','#413f91','#434196',
+  '#45439b','#4644a0','#4846a5','#4a48ab','#4c4ab0','#4d4cb5','#4f4eba','#5150c0',
+  '#5352c5','#5454ca','#5656cd','#5656ce','#5757cf','#5858d0','#5959d2','#5a59d3',
+  '#5a5ad4','#5b5bd5','#5c5cd6','#5d5dd7','#5d5dd9','#5e5eda','#5f5fdb','#6060dc',
+  '#6161dd','#6161df','#6262e0','#6363e1','#6464e2','#6565e3','#6665e5','#6666e6',
+  '#6767e7','#6868e8','#6969e9','#6a69eb','#6a6aec','#6b6bed','#6c6cee','#6d6df0',
+  '#6e6df1','#6e6ef2','#6f6ff3','#7070f4','#7171f6','#7272f7','#7272f8','#7373f9',
+  '#7474fb','#7575fc','#7676fd','#7676fe','#7777ff','#7878ff','#7878ff','#7878ff',
+  '#7979ff','#7979ff','#7a7aff','#7a7aff','#7b7aff','#7b7bff','#7b7bff','#7c7cff',
+  '#7c7cff','#7d7cff','#7d7dff','#7d7dff','#7e7eff','#7e7eff','#7f7eff','#7f7fff',
+  '#7f7fff','#8080ff','#8080ff','#8180ff','#8181ff','#8181ff','#8282ff','#8282ff',
+  '#8382ff','#8383ff','#8383ff','#8484ff','#8484ff','#8584ff','#8585ff','#8585ff',
+  '#8686ff','#8686ff','#8686ff','#8787ff','#8787ff','#8888ff','#8888ff',
+]);
 
 class ModelCanvas extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      renderTimeoutID: null,
-      modelShouldStopRendering: false,
-      modelIsRendering: false,
+    this.width = 512;
+    this.height = 512;
+    const pixelCount = 512 * 512
+    this.imageData = null
+    this.modelData = new Uint8ClampedArray(pixelCount * 4);
+    this.differenceData = new Uint8ClampedArray(pixelCount * 4);
+    this.coloredDifferenceData = new Uint8ClampedArray(pixelCount * 4)
+    this.oldAnnotation = {value: []};
+    this.renderTimeoutID = null;
+    for (let i = 0; i < pixelCount * 4; i++) {
+      this.modelData[i] = 0;
+      this.differenceData[i] = 0;
+      this.coloredDifferenceData[i] = 0;
     }
-
-    this.oldAnnotation     = {value: []};
-    this.updatedComponents = [];
-    this.imageData         = null
-    this.modelData         = new Uint8ClampedArray(512*512*4);
-    this.differenceData    = new Uint8ClampedArray(512*512*4);
-    this.componentsData    = new Array();
-
-    this.getImageData      = this.getImageData.bind(this);
-    this.modelShouldRender = this.modelShouldRender.bind(this);
-    this.renderModel       = this.renderModel.bind(this);
-    this.updateSubject     = this.updateSubject.bind(this);
-  }
-
-  getImageData() {
-    this.imagePlaceholder.onload = (() => {
-      if (typeof(this.modelCanvas) !== 'undefined') {
-        const ctx = this.modelCanvas.getContext('2d');
-        ctx.drawImage(this.imagePlaceholder, 0, 0);
-        this.imageData = ctx.getImageData(0, 0, 512, 512);
-        console.log(this.imageData);
+    this.coords = Array();
+    for (let j = 0; j < this.width; j++) {
+      for (let k = 0; k < this.height; k++) {
+        this.coords[this.width * j + k] = [j, k];
       }
-    }).bind(this);
+    }
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    this.getImageData = this.getImageData.bind(this);
+    this.renderModel = this.renderModel.bind(this);
+    this.updateSubject = this.updateSubject.bind(this);
+  }
+  componentDidMount() {
+    const ctx = this.modelCanvas.getContext('2d');
+    this.imagePlaceholder.onload = this.getImageData;
     this.imagePlaceholder.src = this.props.subject.locations[0]['image/jpeg'];
   }
-  updateBoolState(key, val) {
-    (this.state[key] !== val) ? this.setState({[key]: val}) : null;
-  }
+
   shouldComponentUpdate(nextProps, nextState) {
-    // checks whether the new annotation is the same as the old annotation, and
-    // only allows the component to re-render if they differ
     const o = this.oldAnnotation.value;
     const n = nextProps.classification.annotations[0].value;
-    // trying to make it as fast as possible using lots of if catches, kinda
-    // ugly (and a bit pointless)
-    if (o.length === 0 && n.length === 0) {
-      return false;
-    } else if (o.length !== n.length){
-      this.oldAnnotation = JSON.parse(JSON.stringify(nextProps.classification.annotations[0]));
-      return true;
-    } else if (JSON.stringify(o[o.length - 1]) === JSON.stringify(n[n.length - 1])) {
+    if (JSON.stringify(o[o.length - 1]) === JSON.stringify(n[n.length - 1])) {
       return false;
     } else {
       // store the current annotation (flux means this.props is no longer the
@@ -115,114 +100,86 @@ class ModelCanvas extends React.Component {
       return true;
     }
   }
-  componentDidMount() {
-    const ctx = this.modelCanvas.getContext('2d');
-    const width = ctx.canvas.width;
-    const height = ctx.canvas.height;
-    this.coords = Array(width * height);
-    let j = 0;
-    let k = 0;
-    for (j = 0; j < width; j++) {
-      for (k = 0; k < height; k++) {
-        this.coords[width * j + k] = [j, k];
-      }
-    }
-    this.getImageData();
-    console.log(this);
-  }
   componentDidUpdate() {
     // TODO: Identify here which component has been updated, so we don't
     //       recalculate everything
     // we have new props, calculate the model!
-    this.modelShouldRender();
-  }
-  modelShouldRender() {
-    if (this.state.renderTimeoutID !== null) {
-      clearTimeout(this.state.renderTimeoutID);
-      if (this.state.modelIsRendering) {
-        // the model is currently calculating. Tell it to stop, wait and try again
-        this.updateBoolState('modelShouldStopRendering', true);
-        setTimeout(this.modelShouldRender, 500);
-      } else {
-        this.updateBoolState('modelShouldStopRendering', false);
-        // asynchronously start rendering the model
-        this.setState({
-          renderTimeoutID: setTimeout(this.renderModel, 1000),
-        });
-      }
+    if (this.renderTimeoutID === null) {
+      this.renderTimeoutID = window.setTimeout(this.renderModel, 10);
     } else {
-      this.setState({
-        renderTimeoutID: setTimeout(this.renderModel, 200),
-      });
+      clearTimeout(this.renderTimeoutID);
+      this.renderTimeoutID = window.setTimeout(this.renderModel, 200);
+    }
+  }
+  getImageData() {
+    // get the subject image data as an RGBA array
+    if (typeof(this.modelCanvas) !== 'undefined') {
+      const ctx = this.modelCanvas.getContext('2d');
+      ctx.drawImage(this.imagePlaceholder, 0, 0);
+      this.imageData = ctx.getImageData(0, 0, this.width, this.height);
     }
   }
   renderModel() {
-    this.updateBoolState('modelIsRendering', true);
+    if (this.imageData === null) return;
+    let k = 0;
+    const res = Model(this.props.classification.annotations, this.coords);
+    const pixelCount = res.model.length;
+    const filteredCount = res.ignored.length;
+    for (let i = 0, imAv = 0; i < pixelCount; i++) {
+      this.modelData[4 * i] = res.model[i];
+      this.modelData[4 * i + 1] = res.model[i];
+      this.modelData[4 * i + 2] = res.model[i];
+      this.modelData[4 * i + 3] = 255;
+      imAv = this.imageData.data[4*i]/6 + this.imageData.data[4*i+1]/6 + this.imageData.data[4*i+2]/6
+      this.differenceData[4 * i] = 127 + imAv - res.model[i]/2;
+      this.differenceData[4 * i + 1] = 127 + imAv - res.model[i]/2;
+      this.differenceData[4 * i + 2] = 127 + imAv - res.model[i]/2;
+      this.differenceData[4 * i + 3] = 255;
+    }
+    for (let i = 0; i < filteredCount; i++) {
+      k = 4 * (res.ignored[i][0] * this.width + res.ignored[i][1]);
+      this.modelData[k] = 127;
+      this.modelData[k + 1] = 255;
+      this.modelData[k + 2] = 127;
+      this.differenceData[k] = 127;
+      this.differenceData[k + 1] = 127;
+      this.differenceData[k + 2] = 127;
+    }
+    const ret = new ImageData(this.modelData, 512, 512);
+    let c = [];
+    for (let i = 0; i < 512*512; i++) {
+      c = cmap(this.differenceData[4*i])
+      this.coloredDifferenceData[4*i] = c[0]
+      this.coloredDifferenceData[4*i + 1] = c[1]
+      this.coloredDifferenceData[4*i + 2] = c[2]
+      this.coloredDifferenceData[4*i + 3] = 255
+    }
+    const retDiff = new ImageData(this.coloredDifferenceData, 512, 512);
     const ctx = this.modelCanvas.getContext('2d');
     const ctxDiff = this.diffCanvas.getContext('2d');
-    const addedComponents = Object.values(this.props.classification.annotations[0].value);
-    var i = 0;
-    var imAverage = 0;
-    let comp = {};
-    ctx.clearRect(0, 0, 512, 512);
-    ctx.strokeStyle = 'orange';
-    delete this.modelData;
-    this.modelData = new Uint8ClampedArray(512*512*4);
-    for (i = 0; i < addedComponents.length; i++) {
-      if (this.state.modelShouldStopRendering) {
-        this.updateBoolState('modelIsRendering', false);
-        this.updateBoolState('modelShouldStopRendering', false);
-        return;
-      }
-      comp = addedComponents[i];
-      switch (comp.tool) {
-        case 1:
-          /* ctx.beginPath();
-          ctx.ellipse(comp.x, comp.y, comp.rx, comp.ry, -comp.angle*Math.PI/180, 0, 2*Math.PI);
-          ctx.stroke(); */
-          const rEff = Math.max(comp.rx, comp.ry);
-          const roll = comp.rx > comp.ry ?
-            (90-comp.angle)*Math.PI/180 :
-            -comp.angle*Math.PI/180;
-          const p = {
-            mu: [comp.y, comp.x],
-            rEff: Math.max(comp.rx, comp.ry),
-            roll: comp.rx > comp.ry ? (-comp.angle)*Math.PI/180 : (90-comp.angle)*Math.PI/180,
-            axRatio: comp.rx > comp.ry ? comp.rx / comp.ry : comp.ry / comp.rx,
-            n: comp.details[0].value===0 ? 1 : comp.details[0].value / 20,
-            I0: comp.details[1].value===0 ? 200 : comp.details[1].value*2.55,
-          }
-          const d = sersic2d(this.coords, p);
-          for (var j = 0; j < this.coords.length; j++) {
-            this.modelData[4 * j] += d[j];
-            this.modelData[4 * j + 1] += d[j];
-            this.modelData[4 * j + 2] += d[j];
-            this.modelData[4 * j + 3] += 255;
-            imAverage = this.imageData.data[4 * j]/3.0 +
-              this.imageData.data[4 * j + 1]/3.0 +
-              this.imageData.data[4 * j + 2]/3.0;
-            this.differenceData[4 * j] = (imAverage/2.0 - d[j]/2.0)+127;
-            this.differenceData[4 * j + 1] = (imAverage/2.0 - d[j]/2.0)+127;
-            this.differenceData[4 * j + 2] = (imAverage/2.0 - d[j]/2.0)+127;
-            this.differenceData[4 * j + 3] = 255;
-          }
-          break;
-        }
-    }
-    const ret = ctx.createImageData(512, 512);
-    const retDiff = ctxDiff.createImageData(512, 512);
-    for (i = 0; i < 512*512*4; i++) {
-      ret.data[i] = Math.min(this.modelData[i], 255);
-      retDiff.data[i] = Math.min(this.differenceData[i], 255);
-    }
     ctx.putImageData(ret, 0, 0);
     ctxDiff.putImageData(retDiff, 0, 0);
-    this.updateSubject();
-    this.updateBoolState('modelIsRendering', false);
-    this.updateBoolState('modelShouldStopRendering', false);
+    requestAnimationFrame(this.updateSubject);
+    this.calculateScore();
   }
   calculateScore() {
-    // using the new model and the image data, calculate the new score
+    /* using the new model and the image data, calculate the new score
+    this is given by (formatted in LaTeX)
+    S = 100\exp{\left\{-\left(2k + \Sigma\frac{(x_i - x)^2}{\sigma^2}^2\right)/B\right\}}
+    TODO: accept different ways of scoring, in same place as model?
+          and should it be done here?
+    */
+    const numPixels = this.width * this.height; // this is unnecessary for now
+    const numParameters = 20;
+    let AIC = 2 * numParameters;
+    // choose B, TODO: set B intelligently (i.e. depending on noisiness of image?)
+    const B = 20000;
+    const stdev = 255; // choose stdev to weight importance of parameter count
+    for (let i = 0; i < numPixels; i++) {
+      AIC += Math.pow(this.differenceData[4 * i] - 127, 2) / Math.pow(stdev, 2);
+    }
+    const score = 100 * Math.exp(-Math.pow(AIC, 2) / B);
+    this.props.workflow.configuration.metadata.modelScore = score;
   }
   updateSubject() {
     if (typeof(this.modelCanvas) !== 'undefined') {
@@ -231,14 +188,14 @@ class ModelCanvas extends React.Component {
       this.props.subject.locations[1]['image/jpeg'] = url;
       this.props.subject.locations[2]['image/jpeg'] = urlDiff;
     }
-    this.props.onRender(this.props.classification.annotations[0]);
+    setTimeout(() => this.props.onRender(this.props.classification.annotations[0]), 10);
   }
   render() {
     return (
       <div>
         <img src="" ref={ r => { this.imagePlaceholder = r; }} hidden/>
-        <canvas ref={ r => { this.modelCanvas = r; }} width="512" height="512" hidden />
-        <canvas ref={ r => { this.diffCanvas = r; }} width="512" height="512" hidden />
+        <canvas ref={ r => { this.modelCanvas = r; }} width={this.width} height={this.height} hidden />
+        <canvas ref={ r => { this.diffCanvas = r; }} width={this.width} height={this.height} hidden />
       </div>
     );
   }
