@@ -35,15 +35,16 @@ class SliderTask extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
   handleChange() {
-    const value = parseInt(this.sliderInput.value);
+    const value = parseInt(this.slider.value);
     const newAnnotation = Object.assign(this.props.annotation, {value});
     this.props.onChange(newAnnotation);
   }
+  componentDidMount() {
+    if (this.slider) this.slider.value = this.props.annotation.value
+  }
   render() {
-    const isHidden = typeof(this.props.task.metadata) !== 'undefined' &&
-      this.props.task.metadata.indexOf('fixed') !== -1;
     return (
-      <div hidden={isHidden}>
+      <div>
         <GenericTask
           question={this.props.task.instruction}
           help={this.props.task.help}
@@ -54,7 +55,7 @@ class SliderTask extends React.Component {
               <input
                 type="range"
                 autoFocus={this.props.autoFocus}
-                ref={ (r) => { this.sliderInput = r }}
+                ref={ r => { this.slider = r; }}
                 onChange={this.handleChange}
                 max={101}
                 min={1}
@@ -76,7 +77,7 @@ SliderTask.getDefaultTask = () => ({
 });
 SliderTask.getTaskText = task => task.instruction;
 SliderTask.getDefaultAnnotation = () => ({value: 0});
-SliderTask.isAnnotationComplete = () => true;
+SliderTask.isAnnotationComplete = (task, annotation) => annotation.value > 0;
 SliderTask.propTypes = {
   task: React.PropTypes.object,
   value: React.PropTypes.node,

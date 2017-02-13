@@ -125,7 +125,8 @@ const inCircle = (m, c) => (m.mux-c[0])*(m.mux-c[0]) + (m.muy-c[1])*(m.muy-c[1])
 function renderModel(model, cls, coords) {
   // --> compile mask
   // filter classification for components of type 'mask'
-  console.time('Render')
+  console.time('Total Render')
+  console.time('Compile')
   const maskComps = cls[0].value.filter(c => model[c.tool].type === 'mask');
   // store the length of the array in a variable for perfomance
   const mCLength = maskComps.length;
@@ -162,24 +163,37 @@ function renderModel(model, cls, coords) {
       );
     }
   }
-
+  console.timeEnd('Compile')
+  console.log(renderFuncs);
+  console.time('Render')
   // --> render filtered coordinates
   let flag = false, pixel = 0, filteredCount = 0;
   const pixelCount = coords.length;
   const ret = Array(pixelCount);
-  for (let i = 0; i < pixelCount; i++) {pixel = 0;
+  for (let i = 0; i < pixelCount; i++) {
+    pixel = 0;
     for (let j = 0; j < rCLength; j++) pixel += renderFuncs[j](coords[i])
     ret[i] = pixel;
   }
+  console.timeEnd('Render')
+  console.time('Filtering')
   const filteredCoords = Array();
   for (let i = 0, k = 0; i < pixelCount; i++) {
     flag = false;
     for (let j = 0; j < mCLength; j++) flag = maskFuncs[j](coords[i]) || flag
     if (flag) { filteredCoords[k] = coords[i]; k++; }
   }
-  console.timeEnd('Render')
+  console.timeEnd('Filtering')
+  console.timeEnd('Total Render')
   return { model: ret, ignored: filteredCoords };
 }
+
+
+// \--------/\--------/\--------/\--------/\--------/\--------/\--------/\------
+// -\------/--\------/--\------/--\------/--\------/--\------/--\------/--\-----
+// --\----/----\----/-- PROJECT INDEPENDANT CODE GOES HERE -/----\----/----\----
+// ---\--/------\--/------\--/------\--/------\--/------\--/------\--/------\--/
+// ----\/--------\/--------\/--------\/--------\/--------\/--------\/--------\/-
 
 // ------------ Rendering Function ------------
 function sersic2d(p, coord) {
@@ -250,70 +264,45 @@ const Model = renderModel.bind(null, galaxyModel)
 function test() {
   const exampleClassification = [
     {
-      _toolIndex: 0,
+      _toolIndex: 0, task: "model_draw", _key: 0.38855397077872356,
       value: [
         {
-          tool: 0,
-          frame: 0,
-          details: [ { value: 10 }, ],
-          x: 288.77319796954316,
-          y: 75.37055837563452,
-          _inProgress: false,
-          _key: 0.25325324117385617
+          tool: 0, frame: 0, details: [{ value: 10 }],
+          x: 288.77319796954316, y: 75.37055837563452,
+          _inProgress: false, _key: 0.25325324117385617
         },
         {
-          tool: 1,
-          frame: 0,
-          details: [
-            { value: 50 },
-            { value: 34 },
-          ],
-          x: 100,
-          y: 100,
-          rx: 68.92374331654199,
-          ry: 34.461871658270994,
+          tool: 1, frame: 0, details: [{ value: 50 }, { value: 34 }],
+          x: 100, y: 100,
+          rx: 68.92374331654199, ry: 34.461871658270994,
           angle: 81.67434966957317,
-          _inProgress: false,
-          _key: 0.6611637769588081
+          _inProgress: false, _key: 0.6611637769588081
         },
         {
-          tool: 0,
-          frame: 0,
-          details: [ { value: 10 }, ],
-          x: 152.3784771573604,
-          y: 150.2213197969543,
-          _inProgress: false,
-          _key: 0.435923672331346
+          tool: 0, frame: 0, details: [{ value: 10 }],
+          x: 152.3784771573604, y: 150.2213197969543,
+          _inProgress: false, _key: 0.435923672331346
         }
       ],
-      task: "model_draw",
-      _key: 0.38855397077872356
     }
   ]
 
-  const width = 512;
-  const height = 512;
-  coords = Array(width * height);
-  for (let j = 0; j < width; j++) {
-    for (let k = 0; k < height; k++) coords[width * j + k] = [j, k];
-  }
+  const width = 512, height = 512;
+  const coords = new Array(width * height);
+  for (let j = 0; j < width; j++) { for (let k = 0; k < height; k++) coords[width * j + k] = [j, k];}
 
   // How fast can it go?
   const dDf = { mux: 100.0, muy: 100.0, rx: 68.92, ry: 34.46, scale: 100, roll: 81.67, i0: 50, n: 1, c: 2 }
   const diskMap = ['mux', 'muy', 'rx', 'ry', 'roll', 'i0', 'scale']
-  const d = sersic2d.bind(null, dDf);
-  const cl = coords.length
+  const d = sersic2d.bind(null, dDf); const cl = coords.length
 
-  console.time('Gold Standard')
-  const model = Array(cl);
-  for (let i = 0; i < cl; i++) model[i] = d(coords[i])
-  console.timeEnd('Gold Standard')
+  console.time('Gold Standard');
+  const model = Array(cl); for (let i = 0; i < cl; i++) model[i] = d(coords[i]);
+  console.timeEnd('Gold Standard');
 
   // render the model with this example classification
-  console.time('Render')
-  const r = Model(exampleClassification, coords);
-  console.timeEnd('Render')
+  console.time('Render'); const r = Model(exampleClassification, coords); console.timeEnd('Render')
 }
-//test()
+
 export default Model
 //*/
