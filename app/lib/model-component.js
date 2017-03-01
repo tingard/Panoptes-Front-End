@@ -1,51 +1,6 @@
-// TODO: credit source
-(function() {
-  /**
-   * Decimal adjustment of a number.
-   *
-   * @param {String}  type  The type of adjustment.
-   * @param {Number}  value The number.
-   * @param {Integer} exp   The exponent (the 10 logarithm of the adjustment base).
-   * @returns {Number} The adjusted value.
-   */
-  function decimalAdjust(type, value, exp) {
-    // If the exp is undefined or zero...
-    if (typeof exp === 'undefined' || +exp === 0) {
-      return Math[type](value);
-    }
-    value = +value;
-    exp = +exp;
-    // If the value is not a number or the exp is not an integer...
-    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
-      return NaN;
-    }
-    // Shift
-    value = value.toString().split('e');
-    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
-    // Shift back
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
-  }
+import moreMath from '../lib/math-addons';
 
-  // Decimal round
-  if (!Math.round10) {
-    Math.round10 = function(value, exp) {
-      return decimalAdjust('round', value, exp);
-    };
-  }
-  // Decimal floor
-  if (!Math.floor10) {
-    Math.floor10 = function(value, exp) {
-      return decimalAdjust('floor', value, exp);
-    };
-  }
-  // Decimal ceil
-  if (!Math.ceil10) {
-    Math.ceil10 = function(value, exp) {
-      return decimalAdjust('ceil', value, exp);
-    };
-  }
-})();
+if (isNaN(Math.round10)) moreMath();
 
 const isVar = v => typeof(v) !== 'undefined';
 
@@ -73,7 +28,7 @@ function parseCls_(modelComp, p) {
   return Object.assign({}, modelComp.default, ret);
 }
 
-function interpolate(val, x0, y0, x1, y1) {
+/*function interpolate(val, x0, y0, x1, y1) {
   return (val-x0)*(y1-y0)/(x1-x0) + y0;
 }
 
@@ -118,7 +73,7 @@ function inPolygon(p, c) {
   }
   console.log(t);
   return inPolyRet_.bind(t);
-}
+}*/
 
 const inCircle = (m, c) => (m.mux-c[0])*(m.mux-c[0]) + (m.muy-c[1])*(m.muy-c[1]) < m.size*m.size/9
 
@@ -248,7 +203,7 @@ const galaxyModel = [
     type: 'component',
     default: { mux: 100, muy: 100, rx: 5, ry: 5, scale: 5/8, roll: 0, i0: 127, n: 2, c: 2, }
   },
-  {
+  /*{
     name: 'sersic spiral arm',
     func: sersic2d,
     map: ['n', 'i0', 'scale'],
@@ -256,7 +211,7 @@ const galaxyModel = [
     filterFunc: inPolygon,
     type: 'component',
     default: { mux: 100, muy: 100, rx: 20, ry: 20, scale: 5/8, roll: 0, i0: 127, n: 2, c: 2, }
-  },
+  },*/
 ]
 
 const Model = renderModel.bind(null, galaxyModel)
