@@ -16,6 +16,9 @@ import interventionMonitor from '../lib/intervention-monitor';
 import experimentsClient from '../lib/experiments-client';
 import TaskNav from './task-nav';
 import ExpertOptions from './expert-options';
+`import ModelCanvas from '../components/model-canvas';`
+`import ModelScore from '../components/model-score';`
+
 
 // For easy debugging
 window.cachedClassification = CacheClassification;
@@ -221,7 +224,16 @@ export default class Classifier extends React.Component {
           onChange={this.handleAnnotationChange.bind(this, currentClassification)}
           playIterations={this.props.workflow.configuration.playIterations}
         />
-
+        {if @props.workflow?.configuration?.metadata?.type is 'modelling'
+          (
+            <ModelCanvas
+              classification={currentClassification}
+              onRender={@handleAnnotationChange.bind this, currentClassification}
+              subject={@props.subject}
+              workflow={@props.workflow}
+            />
+          )
+        }
         <div className="task-area">
           {!currentClassification.completed ?
             <Task
@@ -246,7 +258,9 @@ export default class Classifier extends React.Component {
               toggleExpertClassification={this.toggleExpertClassification}
             />
           }
-
+          {if @props.workflow?.configuration?.metadata?.type is 'modelling'
+            <ModelScore workflow={@props.workflow} />
+          }
           <TaskNav
             annotation={currentAnnotation}
             classification={currentClassification}

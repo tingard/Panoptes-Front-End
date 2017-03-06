@@ -195,8 +195,8 @@ class ModelCanvas extends React.Component {
     return (
       <div>
         <img src="" ref={ r => { this.imagePlaceholder = r; }} hidden/>
-        <canvas ref={ r => { this.modelCanvas = r; }} width={this.width} height={this.height} hidden />
-        <canvas ref={ r => { this.diffCanvas = r; }} width={this.width} height={this.height} hidden />
+        <canvas ref={ r => { this.modelCanvas = r; }} width={this.width} height={this.height} hidden='true' />
+        <canvas ref={ r => { this.diffCanvas = r; }} width={this.width} height={this.height} hidden='true' />
       </div>
     );
   }
