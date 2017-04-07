@@ -8,10 +8,8 @@ const isVar = (v) => typeof(v) !== 'undefined';
 // grabs the model score (calculated in modelCanvas) and displays it with a
 // progress bar
 const ModelScore = (props) => {
-  if (isVar(props.workflow) && isVar(props.workflow.configuration) &&
-    isVar(props.workflow.configuration.metadata) &&
-    isVar(props.workflow.configuration.metadata.modelScore)) {
-    let s = props.workflow.configuration.metadata.modelScore;
+  if (props.modelScore !== null) {
+    let s = props.modelScore;
     if (s < 80) {
       s = Math.round10(s, -2);
     } else if (s < 90) {
@@ -43,11 +41,11 @@ const ModelScore = (props) => {
 }
 
 ModelScore.propTypes = {
-  workflow: React.PropTypes.object
+  modelScore: React.PropTypes.number
 };
 
 ModelScore.defaultProps = {
-  workflow: {}
+  modelScore: null
 }
 
 export default ModelScore;
