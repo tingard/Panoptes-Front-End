@@ -1,7 +1,13 @@
 import React from 'react';
 import reglBase from 'regl';
-import { model_, bgRegl_ } from '../lib/webgl-model-component';
+import { model, bgRegl } from '../lib/webgl-model-component';
 
+// helper function that checks whether a variable is defined
+function isVar(v) {
+  return typeof(v) !== "undefined"
+}
+
+// function to check whether webgl is available
 function webGLCompatibilityTest() {
     try {
         return !!window.WebGLRenderingContext && !!document.createElement('canvas').getContext('experimental-webgl');
@@ -10,61 +16,58 @@ function webGLCompatibilityTest() {
     }
 }
 
-function parseCls_(model, annotation) {
+// function to parse an annotation for a specific model, uses the model's map
+// property to return an object of key: values to be passed to rendering funcs
+function parseCls(model, annotation) {
   let renderFunctions = [];
+  // cycle through each task
   for (let i = 0; i < annotation.length; i++) {
     // did we get a drawn on component?
     if (annotation[i].value[0].value.length > 0) {
       // get position values
       const componentType = annotation[i].task
-      const parameters = [
-        annotation[i].value[0].value[0].x,
-        this.state.imageSize[0] - annotation[i].value[0].value[0].y,
-        annotation[i].value[0].value[0].rx,
-        annotation[i].value[0].value[0].ry,
-        annotation[i].value[0].value[0].angle,
-      ]
+      const parameters = [];
+      if (isVar(annotation[i].value[0].value[0].x)) {
+        // have we got an object centre?
+        parameters.push(annotation[i].value[0].value[0].x);
+        parameters.push(this.state.imageSize[0] - annotation[i].value[0].value[0].y);
+      }
+      if (isVar(annotation[i].value[0].value[0].r)) {
+        // radius => circle or triangle
+        parameters.push(parseFloat(annotation[i].value[0].value[0].r))
+      } else if (isVar(annotation[i].value[0].value[0].rx)) {
+        // independent rx and ry => ellipse
+        parameters.push(parseFloat(annotation[i].value[0].value[0].rx))
+        parameters.push(parseFloat(annotation[i].value[0].value[0].ry))
+      } else if (isVar(annotation[i].value[0].value[0].width)) {
+        // width and height => rectangle (no rotation)
+        parameters.push(parseFloat(annotation[i].value[0].value[0].width))
+        parameters.push(parseFloat(annotation[i].value[0].value[0].height))
+      }
+      if (isVar(annotation[i].value[0].value[0].angle)) {
+        // add the angle if it's present
+        parameters.push(parseFloat(annotation[i].value[0].value[0].angle))
+      }
+      if (isVar(annotation[i].value[0].value[0].points)) {
+        // polygon and bezier have points, though bezier is weird sometimes
+        const points = [];
+        annotation[i].value[0].value[0].points.forEach(
+          (p) => points.push([p.x, this.state.imageSize[0] - p.y])
+        )
+        parameters.push(points);
+      }
       // get values from the sliders
-      annotation[i].value[1].value.forEach(i => parameters.push(parseFloat(i.value)));
+      annotation[i].value[1].value.forEach(v => parameters.push(parseFloat(v.value)));
       const ret = {}
       parameters.forEach((c, j) => {
         ret[model[i].map[j]] = c;
       });
-      renderFunctions[i] = [model[i].func, Object.assign({name: model[i].name}, model[i].default, ret)]
+      renderFunctions.push([model[i].func, Object.assign({name: model[i].name}, model[i].default, ret)])
     }
   }
+  console.log(renderFunctions);
   return renderFunctions;
 }
-
-const testAnnotation = [
-  {
-    _toolIndex: 0, task: "disk",
-    value: [
-      {
-        task: 'drawDisk',
-        value: [
-          {
-            tool: 0, frame: 0,
-            x: 100, y: 256,
-            rx: 80.0, ry: 40.0,
-            angle: -45,
-          }
-        ],
-      },
-      {
-        task: 'slideDisk',
-        value: [
-          {
-            task: 'scaleSlider', value: "0.4"
-          },
-          {
-            task: 'intensitySlider', value: "1"
-          }
-        ]
-      }
-    ],
-  },
-]
 
 class webGLModelCanvas extends React.Component {
   constructor(props) {
@@ -75,7 +78,6 @@ class webGLModelCanvas extends React.Component {
     textures */
     this.state = {
       toRender: [],
-      toMask: [],
       imageHasLoaded: false,
       textures: null,
       imageSize: [400, 400],
@@ -89,14 +91,15 @@ class webGLModelCanvas extends React.Component {
     this.differenceData = new Uint8Array(pixelCount * 4);
 
     // function binding
-    this.getDifference = this.getDifference.bind(this);
+    this.updateTextures = this.updateTextures.bind(this);
     this.getScore = this.getScore.bind(this);
     this.updateSubject = this.updateSubject.bind(this);
 
     this.componentDidMount = this.componentDidMount.bind(this);
     //this.componentDidUpdate = this.componentDidUpdate.bind(this);
 
-    this.parseCls_ = parseCls_.bind(this);
+    // parseCls needs to know image size (for now), so bind it
+    this.parseCls = parseCls.bind(this);
 
     if (this.props.subject.locations.length < 2) {
       const im0 = this.props.subject.locations[0];
@@ -104,6 +107,8 @@ class webGLModelCanvas extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
+    // require two images: one for subject and one for difference
+    // test here so contiues to work when subject changes
     if (this.props.subject.locations.length < 2) {
       const im0 = this.props.subject.locations[0];
       this.props.subject.locations[1] = Object.assign({}, im0);
@@ -113,13 +118,12 @@ class webGLModelCanvas extends React.Component {
     if (this.model !== null) {
       // if so, update the render function list to the new annotation
       this.setState({
-        toRender: this.parseCls_(this.model, nextProps.classification.annotations),
-        toMask: []
-      }, () => window.requestAnimationFrame(this.getDifference));
+        toRender: this.parseCls(this.model, nextProps.classification.annotations),
+      }, () => window.requestAnimationFrame(this.updateTextures));
     }
   }
-  getDifference() {
-    const modelData = this.modelRegl.read();
+  updateTextures() {
+    const modelData = this.modelRegl.read(this.modelData);
     // check if the subject image has loaded
     if (this.state.imageHasLoaded) {
       // grab a texture from it
@@ -131,7 +135,7 @@ class webGLModelCanvas extends React.Component {
       this.setState({
         textures: {
           modelTexture: this.differenceRegl.texture({
-            data:modelData,
+            data: modelData,
             width: this.state.imageSize[0],
             height: this.state.imageSize[0],
           }),
@@ -157,10 +161,7 @@ class webGLModelCanvas extends React.Component {
     if (typeof(this.modelCanvas) !== 'undefined' &&
         typeof(this.modelCanvas) !== 'undefined') {
       const imOutType = Object.keys(this.props.subject.locations[1])[0];
-      //const url = this.modelCanvas.toDataURL(imOutType, 0.92)
       const urlDiff = this.differenceCanvas.toDataURL(imOutType, 0.92)
-      //this.imOut.src = urlDiff;
-      //this.props.subject.locations[1]['image/jpeg'] = url;
       this.props.subject.locations[1][imOutType] = urlDiff;
     }
   }
@@ -170,7 +171,6 @@ class webGLModelCanvas extends React.Component {
       return;
     }
     // component has mounted, initialise the regl canvases
-    // this.im.crossOrigin = "Anonymous";
     this.modelRegl = reglBase({
       canvas: this.modelCanvas,
       attributes: { preserveDrawingBuffer: true }
@@ -181,12 +181,11 @@ class webGLModelCanvas extends React.Component {
     });
 
     // initialise each component of the model (replace func in model comp with func(regl))
-    this.model = model_.map(c => Object.assign(c, { func: c.func(this.modelRegl) }));
+    this.model = model.map(c => Object.assign(c, { func: c.func(this.modelRegl) }));
 
     // compile an initial render
     this.setState({
-      toRender: [], //parseCls_(this.model, testAnnotation),
-      toMask: []
+      toRender: [], //parseCls(this.model, testAnnotation),
     });
 
     // TODO: optimize this, as it seems slower than it should be
@@ -199,56 +198,40 @@ class webGLModelCanvas extends React.Component {
       for (let i = 0; i < toRenderLength; i++) {
         this.state.toRender[i][0](this.state.toRender[i][1])
       }
-      // TODO: how to mask (if at all)
-      //for (let i = 0; i < this.state.toMask.length; i++) {
-      //  this.state.toMask[i][0](this.state.toMask[i][1])
-      //}
     }).bind(this))
 
     // set the differenceRegl rendering function
-    const bgRegl = bgRegl_(this.differenceRegl);
+    const boundBgRegl = bgRegl(this.differenceRegl);
     this.differenceRegl.frame((function() {
       this.differenceRegl.clear({
         color: [1, 1, 1, 1]
       })
       if (this.state.textures !== null) {
-        bgRegl(this.state.textures);
+        boundBgRegl(this.state.textures);
       }
     }).bind(this));
   }
   render() {
     return (
-      <div>
+      <div hidden>
         <canvas
           width={this.state.imageSize[0]}
           height={this.state.imageSize[1]}
           data-style={{ backgroundColor: '#000' }}
           ref={r => {this.modelCanvas = r }}
-          hidden
         />
         <canvas
           width={this.state.imageSize[0]}
           height={this.state.imageSize[1]}
           data-style={{ backgroundColor: '#000' }}
           ref={r => { this.differenceCanvas = r }}
-          hidden
         />
         <img
-          id="im"
           src={this.props.subject.locations[0]['image/png']}
           ref={r => { this.im = r }}
           onLoad={ () => {this.setState({ imageHasLoaded: true })}}
-          alt="Galaxy"
-          crossOrigin="Anonymous"
-          hidden
-        />
-        <img
-          id="im2"
-          src={this.props.subject.locations[0]['image/png']}
-          width="50px"
-          ref={r => { this.imOut = r }}
-          alt="Difference between model and galaxy"
-          hidden
+          alt="Galaxy Image"
+          crossOrigin=""
         />
       </div>
     );

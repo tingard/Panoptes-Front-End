@@ -4,29 +4,38 @@ import React from 'react';
 import assert from 'assert';
 import ModelCanvas from './model-canvas';
 
-const classification = {
-  annotation: {
-    _toolIndex: 0, task: "model_draw", _key: 0.38855397077872356,
+const testAnnotation = [
+  {
+    _toolIndex: 0, task: "disk",
     value: [
       {
-        tool: 0, frame: 0, details: [{ value: 10 }],
-        x: 288.77319796954316, y: 75.37055837563452,
-        _inProgress: false, _key: 0.25325324117385617
-      },
-      /*{
-        tool: 1, frame: 0, details: [{ value: 50 }, { value: 34 }],
-        x: 100, y: 100,
-        rx: 68.92374331654199, ry: 34.461871658270994,
-        angle: 81.67434966957317,
-        _inProgress: false, _key: 0.6611637769588081
+        task: 'drawDisk',
+        value: [
+          {
+            tool: 0, frame: 0,
+            x: 100, y: 256,
+            rx: 80.0, ry: 40.0,
+            angle: -45,
+          }
+        ],
       },
       {
-        tool: 0, frame: 0, details: [{ value: 10 }],
-        x: 152.3784771573604, y: 150.2213197969543,
-        _inProgress: false, _key: 0.435923672331346
-      }*/
+        task: 'slideDisk',
+        value: [
+          {
+            task: 'scaleSlider', value: "0.4"
+          },
+          {
+            task: 'intensitySlider', value: "1"
+          }
+        ]
+      }
     ],
-  }
+  },
+]
+
+const classification = {
+  annotations: testAnnotation
 }
 
 const subject = {

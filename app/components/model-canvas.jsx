@@ -1,5 +1,6 @@
 // let's try this again, with the new version
 // TODO: How to load model components for the current project?
+// This is a fallback if webgl is not available for whatever reason.
 
 import React from 'react';
 
