@@ -1,4 +1,5 @@
 React = require 'react'
+createReactClass = require 'create-react-class'
 BoardPreview = require './board-preview'
 ActiveUsers = require './active-users'
 apiClient = require 'panoptes-client/lib/api-client'
@@ -19,7 +20,7 @@ Paginator = require './lib/paginator'
 
 `import PopularTags from './popular-tags';`
 
-module.exports = React.createClass
+module.exports = createReactClass
   displayName: 'TalkInit'
   mixins: [HandlePropChanges]
 

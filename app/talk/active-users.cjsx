@@ -1,11 +1,12 @@
 React = require 'react'
+createReactClass = require 'create-react-class'
 apiClient = require 'panoptes-client/lib/api-client'
 {sugarApiClient} = require 'panoptes-client/lib/sugar'
 {Link} = require 'react-router'
 Paginator = require './lib/paginator'
 activeUserCache = require('./lib/active-user-cache').default
 
-module.exports = React.createClass
+module.exports = createReactClass
   displayName: 'ActiveUsers'
 
   contextTypes:
